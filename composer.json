@@ -1,0 +1,22 @@
+{
+    "name": "featherbb/marketplace",
+    "description": "A collection of plugins and themes for FeatherBB",
+    "keywords": ["featherbb","marketplace","plugins","themes"],
+    "homepage": "http://marketplace.featherbb.org",
+    "license": "MIT",
+    "authors": [{
+        "name": "beaver"
+    }],
+    "autoload": {
+		"psr-4": {
+			"": "",
+            "App\\": "src/"
+		}
+	},
+    "require": {
+        "php": ">=5.5.0",
+        "slim/slim": "~3.0",
+        "j4mie/idiorm": "^1.5",
+        "statical/statical": "^1.1"
+    }
+}
