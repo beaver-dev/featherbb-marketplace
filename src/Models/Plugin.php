@@ -65,6 +65,10 @@ class Plugin
     {
         $plugin = ORM::for_table('plugins')->where('vendor_name', $name)->find_one();
 
+        if ($plugin === false) {
+            App::notFound();
+        }
+
         // Get menu items to display in plugin infos...
         preg_match_all('/\s\s#{2} (.+)/S', $plugin->readme, $plugin_menus, PREG_PATTERN_ORDER);
         $plugin->menus = $plugin_menus[1];

@@ -1,6 +1,5 @@
 <?php
 
-use Slim;
 use App\Core\Interfaces\SlimStatic;
 
 ini_set('display_errors', 1);

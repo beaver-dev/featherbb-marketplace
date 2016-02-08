@@ -1,7 +1,7 @@
 <?php
 return [
     'settings' => [
-        'displayErrorDetails' => false,
+        'displayErrorDetails' => true,
 
         // Renderer settings
         'renderer' => [
@@ -17,7 +17,7 @@ return [
             'host' => 'localhost',
             'dbname' => 'marketplace',
             'username' => 'root',
-            'password' => 'root',
+            'password' => '',
         ],
     ],
 ];
