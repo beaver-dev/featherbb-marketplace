@@ -1,7 +1,7 @@
 <?php namespace App\Models;
 
 use ORM;
-use App\Model\Github;
+use App\Models\Github;
 
 /**
  * Plugin class
@@ -59,6 +59,32 @@ class Plugin
         $plugin->vendor_name = $vendor_name[1];
         $plugin->readme = Github::getReadmeData($vendor_name[1]);
         $plugin->save();
+    }
+
+    public static function getData($name = '')
+    {
+        $plugin = ORM::for_table('plugins')->where('vendor_name', $name)->find_one();
+
+        // Get menu items to display in plugin infos...
+        preg_match_all('/\s\s#{2} (.+)/S', $plugin->readme, $plugin_menus, PREG_PATTERN_ORDER);
+        $plugin->menus = $plugin_menus[1];
+        // var_dump($plugin_menus[1]);
+
+        // Parse readme to get each h2 body content...
+        $results = preg_split('/\s\s## \w+\s\s.*?/', $plugin->readme, -1, PREG_SPLIT_NO_EMPTY);
+        $general_infos = $results[0];
+        array_shift($results);
+        // var_dump($results);
+
+        // And associate h2 menu items with their content as an array
+        $menu_content = [];
+        foreach ($results as $key => $result) {
+            $menu_key = strtolower($plugin->menus[$key]);
+            $menu_content[$menu_key] = $result;
+        }
+        $plugin->menu_content = $menu_content;
+
+        return $plugin;
     }
 
 }

@@ -1,13 +1,13 @@
 <?php namespace App\Controllers;
 
-use ORM;
+use Michelf\Markdown;
 use App\Models\Plugin as PluginModel;
-use App\Models\Github as GithubApi;
+// use App\Models\Github as GithubApi;
 // use Model;
 
 class PluginsController {
 
-    public function find($req, $res, $args)
+    public function index($req, $res, $args)
     {
         $lastPlugins = PluginModel::getLatests();
         // $data = GithubApi::getComposerData('private-messages');
@@ -15,6 +15,23 @@ class PluginsController {
         return View::setPageInfo(['lastPlugins' => $lastPlugins])
             ->addBreadcrumb(['plugins'])
             ->addTemplate('plugins/index.php')
+            ->display();
+    }
+
+    public function view($req, $res, $args)
+    {
+        $plugin = PluginModel::getData($args['name']);
+
+        if (!isset($args['action']) || !isset($plugin->menu_content[$args['action']])) {
+            $item = 'description';
+        } else {
+            $item = $args['action'];
+        }
+        $markdown = Markdown::defaultTransform($plugin->menu_content[$item]);
+
+        return View::setPageInfo(['plugin' => $plugin, 'markdown' => $markdown])
+            ->addBreadcrumb(['plugins'])
+            ->addTemplate('plugins/view.php')
             ->display();
     }
 

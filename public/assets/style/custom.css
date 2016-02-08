@@ -53,3 +53,17 @@
 	background:#e3f7fc;
 	border:1px solid #8ed9f6;
 }
+
+/*Inline lists*/
+ul.inline li {
+    display: inline;
+    list-style: none; /* pour enlever les puces sur IE7 */
+    margin: 10px;
+}
+
+ul.inline li a {
+    display: inline-block;
+    padding: 5px 10px;
+    text-decoration: none;
+    font-weight: bold;
+}

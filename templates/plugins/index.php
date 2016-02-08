@@ -5,7 +5,10 @@
                 <div class="six columns">
                     <div class="plugin-card">
                         <div class="plugin-card-top">
-                            <a href="https://wordpress.org/plugins/jetpack/" class="plugin-icon"><style type='text/css'>#plugin-icon-jetpack { width:128px; height:128px; background-image: url(//ps.w.org/jetpack/assets/icon-128x128.png?rev=1279667); background-size:128px 128px; }@media only screen and (-webkit-min-device-pixel-ratio: 1.5) { #plugin-icon-jetpack { background-image: url(//ps.w.org/jetpack/assets/icon-256x256.png?rev=1279667); } }</style><div class='plugin-icon' id='plugin-icon-jetpack' style='float:left; margin: 3px 6px 6px 0px;'></div></a>
+                            <a href="<?= Router::pathFor('plugins.view', ['name'=>$plugin->vendor_name]); ?>" class="plugin-icon">
+                                <style type='text/css'>#plugin-icon-jetpack { width:128px; height:128px; background-image: url(//ps.w.org/jetpack/assets/icon-128x128.png?rev=1279667); background-size:128px 128px; }@media only screen and (-webkit-min-device-pixel-ratio: 1.5) { #plugin-icon-jetpack { background-image: url(//ps.w.org/jetpack/assets/icon-256x256.png?rev=1279667); } }</style>
+                                <div class='plugin-icon' id='plugin-icon-jetpack' style='float:left; margin: 3px 6px 6px 0px;'></div>
+                            </a>
                             <div class="name column-name">
                                 <h4><a href="<?= Router::pathFor('plugins.view', ['name'=>$plugin->vendor_name]); ?>"><?= $plugin->name; ?></a></h4>
                             </div>
@@ -25,10 +28,6 @@
                             </div>
                             <div class="column-installs">
                                 1+ million active installs
-                            </div>
-                            <div class="column-compatibility">
-                                <strong>Compatible up to:</strong>
-                                <span class="compatibility">4.4.2</span>
                             </div>
                         </div>
                     </div>
