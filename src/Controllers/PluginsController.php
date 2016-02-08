@@ -59,22 +59,12 @@ class PluginsController {
     public function accept($req, $res, $args)
     {
         // Prepare base data to send to view
-        $id = Request::getParsedBody()['plugin_id'];
-        $homepage = Request::getParsedBody()['homepage'];
-        if (Request::isPost()) {
-            // Check if plugin is valid
-            $validate = PluginModel::validate(Request::getParsedBody());
-            if ($validate !== true) {
-                $data['errors'] = $validate;
-            } else {
-                PluginModel::create(Request::getParsedBody());
-                return Router::redirect(Router::pathFor('plugins.create'));
-            }
-        }
-        // Display view
-        return View::setPageInfo($data)
-            ->addTemplate('plugins/create.php')
-            ->display();
+        // $id = Request::getParsedBody()['plugin_id'];
+        // $homepage = Request::getParsedBody()['homepage'];
+        // var_dump(Request::getParsedBody());
+        $plugin = PluginModel::accept(Request::getParsedBody());
+        $name = PluginModel::downloadData($plugin->homepage);
+        var_dump($name);
     }
 
     public function pending($req, $res, $args)
@@ -94,10 +84,12 @@ class PluginsController {
         if (!$plugin) {
             return "not found";
         }
-        // $plugin->
+        $plugin->nb_downloads = $plugin->nb_downloads+1;
+        $plugin->save();
+        $version = isset($args['version']) ? $args['version'] : 'master';
         // https://api.github.com/repos/featherbb/private-messages/zipball/0.1.0
         // https://api.github.com/repos/featherbb/private-messages/releases
-        // return Router::redirect('https://api.github.com/repos/featherbb/$args['name']/zipball/0.1.0');
+        return Router::redirect('https://api.github.com/repos/featherbb/'.$plugin->vendor_name.'/zipball/'.$version);
     }
 
 }

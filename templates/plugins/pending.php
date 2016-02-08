@@ -20,8 +20,8 @@
                             <a href="<?= $plugin->homepage; ?>" target="_blank"><?= $plugin->name; ?></a>
                         </td>
                         <td>
-                            <input class="u-full-width" type="url" name="homepage" form="accept-form" value="https://github.com/featherbb/REPLACEME">
-                            <input type="hidden" name="plugin_id" value="<?= $plugin->id; ?>">
+                            <input class="u-full-width" type="url" name="homepage" form="accept-form" value="https://github.com/featherbb/private-messages">
+                            <input type="hidden" name="plugin_id" value="<?= $plugin->id; ?>" form="accept-form">
                         </td>
                         <td>
                             <button type="submit" name="submit" form="accept-form" class="">&#10003;</button>

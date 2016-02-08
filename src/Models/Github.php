@@ -6,6 +6,24 @@
 class Github
 {
 
+    public static function getComposerData($vendor_name, $version = 'master')
+    {
+        $uri = "https://api.github.com/repos/featherbb/$vendor_name/contents/composer.json?ref=$version";
+
+        // Prepare cURL connection
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $uri);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, "featherbb");
+        $data = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close ($ch);
+
+        // Return decoded data as object
+        $data = json_decode($data);
+        return $data;
+    }
+
     public static function getReadmeData($vendor_name, $version = 'master')
     {
         // $uri = "https://api.github.com/repos/featherbb/$vendor_name/contents/composer.json?ref=$version";
@@ -21,8 +39,7 @@ class Github
         $error = curl_error($ch);
         curl_close ($ch);
 
-        // Return decoded data as object
-        // $data = json_decode($data);
+        // Return README.md file content
         return $data;
     }
 

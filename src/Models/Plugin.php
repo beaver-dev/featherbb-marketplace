@@ -54,11 +54,54 @@ class Plugin
     {
         preg_match('/featherbb\/(.+)/', $data['homepage'], $vendor_name);
         $plugin = ORM::for_table('plugins')->find_one($data['plugin_id']);
+
         $plugin->homepage = $data['homepage'];
-        $plugin->status = 2;
+        // $plugin->status = 2;
         $plugin->vendor_name = $vendor_name[1];
-        $plugin->readme = Github::getReadmeData($vendor_name[1]);
+        // $plugin->readme = Github::getReadmeData($vendor_name[1]);
         $plugin->save();
+
+        return $plugin;
+    }
+
+    public static function downloadData($uri='')
+    {
+        // Prepare data for archive download
+        preg_match('/featherbb\/(.+)/', $uri, $name);
+        $name = $name[1];
+        $uri = rtrim($uri, '/').'/archive/master.zip'; // Append plugin latest release zipball to download
+        $archive_path = getcwd()."/tmp/$name.zip";
+        $data_path = getcwd()."/pluginsdata/$name/";
+
+        // Download archive in tmp folder
+        file_put_contents($archive_path, file_get_contents($uri));
+
+        // Remove old files if present
+        if (!is_dir($data_path))
+            mkdir($data_path);
+        emptyDir($data_path);
+
+        $zip = new \ZipArchive;
+        if ($zip->open($archive_path) === true) {
+
+            // Move needed files to pluginsdata folder
+            for($i = 0; $i < $zip->numFiles; $i++) {
+                $filename = str_replace($name.'-master/', '', $zip->getNameIndex($i));
+                // Filter files to move
+                if ($filename == 'composer.json' || substr($filename, 0, 3) === 'doc' || substr($filename, 0, 6) === 'assets') {
+                    $zip->renameIndex($i, $filename);
+                    $zip->extractTo($data_path, array($zip->getNameIndex($i)));
+                }
+            }
+            $zip->close();
+            $result = true;
+        } else {
+            $result = false;
+        }
+
+        unlink($archive_path);
+
+        return $result;
     }
 
     public static function getData($name = '')
@@ -91,4 +134,27 @@ class Plugin
         return $plugin;
     }
 
+}
+
+// Closure to empty previous data from "public/pluginsdata" directory
+function emptyDir($path)
+{
+    if (is_dir($path) === true)
+    {
+        $files = array_diff(scandir($path), array('.', '..'));
+
+        foreach ($files as $file)
+        {
+            emptyDir(realpath($path) . '/' . $file);
+        }
+
+        return rmdir($path);
+    }
+
+    else if (is_file($path) === true)
+    {
+        return unlink($path);
+    }
+
+    return false;
 }
