@@ -1,4 +1,5 @@
-<div>
+<div class="plugin-head">
+    <h3><?= $plugin->name; ?></h3>
     <ul id="plugin-nav" class="inline">
 <?php foreach($plugin->menus as $menu): ?>
         <li>

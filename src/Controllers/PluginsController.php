@@ -1,5 +1,6 @@
 <?php namespace App\Controllers;
 
+use ORM;
 use Michelf\Markdown;
 use App\Models\Plugin as PluginModel;
 // use App\Models\Github as GithubApi;
@@ -85,6 +86,18 @@ class PluginsController {
             ->addBreadcrumb(['plugins'])
             ->addTemplate('plugins/pending.php')
             ->display();
+    }
+
+    public function download($req, $res, $args)
+    {
+        $plugin = ORM::for_table('plugins')->where('vendor_name', $args['name'])->find_one();
+        if (!$plugin) {
+            return "not found";
+        }
+        // $plugin->
+        // https://api.github.com/repos/featherbb/private-messages/zipball/0.1.0
+        // https://api.github.com/repos/featherbb/private-messages/releases
+        // return Router::redirect('https://api.github.com/repos/featherbb/$args['name']/zipball/0.1.0');
     }
 
 }
