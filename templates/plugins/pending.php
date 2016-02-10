@@ -9,7 +9,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>New URL</th>
+                        <th>Vendor name</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -20,7 +20,7 @@
                             <a href="<?= $plugin->homepage; ?>" target="_blank"><?= $plugin->name; ?></a>
                         </td>
                         <td>
-                            <input class="u-full-width" type="url" name="homepage" form="accept-form" value="https://github.com/featherbb/private-messages">
+                            <input class="u-full-width" type="text" name="vendor_name" form="accept-form" value="private-messages">
                             <input type="hidden" name="plugin_id" value="<?= $plugin->id; ?>" form="accept-form">
                         </td>
                         <td>

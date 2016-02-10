@@ -3,15 +3,13 @@
 use ORM;
 use Michelf\Markdown;
 use App\Models\Plugin as PluginModel;
-// use App\Models\Github as GithubApi;
-// use Model;
+use App\Models\Github as GithubApi;
 
 class PluginsController {
 
     public function index($req, $res, $args)
     {
         $lastPlugins = PluginModel::getLatests();
-        // $data = GithubApi::getComposerData('private-messages');
 
         return View::setPageInfo(['lastPlugins' => $lastPlugins])
             ->addBreadcrumb(['plugins'])
@@ -19,20 +17,13 @@ class PluginsController {
             ->display();
     }
 
-    public function view($req, $res, $args)
+    public function pending($req, $res, $args)
     {
-        $plugin = PluginModel::getData($args['name']);
+        $pendingPlugins = PluginModel::getPending();
 
-        if (!isset($args['action']) || !isset($plugin->menu_content[$args['action']])) {
-            $item = 'description';
-        } else {
-            $item = $args['action'];
-        }
-        $markdown = Markdown::defaultTransform($plugin->menu_content[$item]);
-
-        return View::setPageInfo(['plugin' => $plugin, 'markdown' => $markdown])
+        return View::setPageInfo(['plugins' => $pendingPlugins])
             ->addBreadcrumb(['plugins'])
-            ->addTemplate('plugins/view.php')
+            ->addTemplate('plugins/pending.php')
             ->display();
     }
 
@@ -58,23 +49,34 @@ class PluginsController {
 
     public function accept($req, $res, $args)
     {
-        // Prepare base data to send to view
-        // $id = Request::getParsedBody()['plugin_id'];
-        // $homepage = Request::getParsedBody()['homepage'];
-        // var_dump(Request::getParsedBody());
-        $plugin = PluginModel::accept(Request::getParsedBody());
-        $name = PluginModel::downloadData($plugin->homepage);
-        var_dump($name);
+        // Download archive and store info files to disk
+        $vendor_name = Request::getParsedBody()['vendor_name'];
+        $plugin_id = Request::getParsedBody()['plugin_id'];
+
+        if (PluginModel::downloadData($vendor_name) === false) {
+            echo "error archive"; return;
+        }
+        // If no errors, store generic infos to DB
+        $plugin = PluginModel::accept($plugin_id, $vendor_name);
     }
 
-    public function pending($req, $res, $args)
+    public function view($req, $res, $args)
     {
-        $pendingPlugins = PluginModel::getPending();
-        // $data = GithubApi::getComposerData('private-messages');
+        $plugin = PluginModel::getData($args['name']);
+        $action = isset($args['action']) ? $args['action'] : 'description';
 
-        return View::setPageInfo(['plugins' => $pendingPlugins])
+        if ($action === 'history') {
+            // $content = json_decode(GithubApi::getTags($args['name']));
+            $content = GithubApi::getTags($args['name']);
+        } elseif (!isset($plugin->menu_content[$action])) {
+            $content = Markdown::defaultTransform($plugin->menu_content['description']);
+        } else {
+            $content = Markdown::defaultTransform($plugin->menu_content[$action]);
+        }
+
+        return View::setPageInfo(['plugin' => $plugin, 'content' => $content, 'active_menu' => $action])
             ->addBreadcrumb(['plugins'])
-            ->addTemplate('plugins/pending.php')
+            ->addTemplate('plugins/view.php')
             ->display();
     }
 
@@ -90,6 +92,17 @@ class PluginsController {
         // https://api.github.com/repos/featherbb/private-messages/zipball/0.1.0
         // https://api.github.com/repos/featherbb/private-messages/releases
         return Router::redirect('https://api.github.com/repos/featherbb/'.$plugin->vendor_name.'/zipball/'.$version);
+    }
+
+    public function history($req, $res, $args)
+    {
+        $plugin = PluginModel::getData($args['name']);
+        $history = PluginModel::history($args['name']);
+
+        return View::setPageInfo(['plugin' => $plugin, 'markdown' => $markdown])
+            ->addBreadcrumb(['plugins'])
+            ->addTemplate('plugins/view.php')
+            ->display();
     }
 
 }
