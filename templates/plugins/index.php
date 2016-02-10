@@ -1,36 +1,36 @@
-            <a href="<?= Router::pathFor('plugins.create', ['type' => 'plugin']) ?>">Add plugin</a>
-
-            <div class="row">
-<?php foreach ($lastPlugins as $plugin): ?>
-                <div class="six columns">
-                    <div class="plugin-card">
-                        <div class="plugin-card-top">
-                            <a href="<?= Router::pathFor('plugins.view', ['name'=>$plugin->vendor_name]); ?>" class="plugin-icon">
-                                <style type='text/css'>#plugin-icon-jetpack { width:128px; height:128px; background-image: url(//ps.w.org/jetpack/assets/icon-128x128.png?rev=1279667); background-size:128px 128px; }@media only screen and (-webkit-min-device-pixel-ratio: 1.5) { #plugin-icon-jetpack { background-image: url(//ps.w.org/jetpack/assets/icon-256x256.png?rev=1279667); } }</style>
-                                <div class='plugin-icon' id='plugin-icon-jetpack' style='float:left; margin: 3px 6px 6px 0px;'></div>
-                            </a>
-                            <div class="name column-name">
-                                <h4><a href="<?= Router::pathFor('plugins.view', ['name'=>$plugin->vendor_name]); ?>"><?= $plugin->name; ?></a></h4>
-                            </div>
-                            <div class="desc column-description">
-                                <p><?= $plugin->description; ?></p>
-                                <p class="authors"><cite>By: <a href='//profiles.wordpress.org/automattic/'>Automattic</a>, <a href='//profiles.wordpress.org/aduth/'>aduth</a>, <a href='//profiles.wordpress.org/akirk/'>Alex Kirk</a>, <a href='//profiles.wordpress.org/allendav/'>allendav</a>, <a href='//profiles.wordpress.org/alternatekev/'>alternatekev</a>, <a href='//profiles.wordpress.org/andy/'>Andy Skelton</a>, and others.</cite></p>
-                            </div>
-                        </div>
-
-                        <div class="plugin-card-bottom">
-                            <div class="vers column-rating">
-                                <div class='wporg-ratings' title='4 out of 5 stars' style='color:#ffb900;'><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-empty"></span></div>			<span class="num-ratings" title="Rating based on 812 reviews">(812)</span>
-                            </div>
-                            <div class="column-updated">
-                                <strong>Last Updated:</strong>
-                                <span title="2016-1-21">2 weeks ago</span>
-                            </div>
-                            <div class="column-installs">
-                                1+ million active installs
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div id="vf" class="blocktable">
+            <h2><span>Plugins</span></h2>
+            <div class="box">
+                <div class="inbox">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="tcl" scope="col">Plugin</th>
+                                <th class="tc2" scope="col">Downloads</th>
+                                <th class="tcr" scope="col">Version</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+<?php foreach ($lastPlugins as $key => $plugin): ?>
+                            <tr class="<?= ($key % 2 == 0) ? 'rowodd' : 'roweven'; ?> plugin-row">
+                                <td class="tcl">
+                                    <div class="icon"><div class="nosize">1</div></div>
+                                    <div class="tclcon">
+                                        <div>
+                                            <h3><a href="<?= Router::pathFor('plugins.view', ['name'=>$plugin->vendor_name]); ?>"><?= $plugin->name; ?></a>  <small class="byuser">by <?= $plugin->author; ?></small></h3>
+                                            <div class="forumdesc"><?= isset($plugin->description) ? $plugin->description : 'No description available'; ?></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="tc2"><?= $plugin->nb_downloads; ?></td>
+                                <td class="tcr">
+                                    <a href="/post/175/#p175"><?= isset($plugin->last_version) ? $plugin->last_version : '0.1.0'; ?></a>
+                                    <span><?= $plugin->last_update; ?></span>
+                                </td>
+                            </tr>
 <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </div>

@@ -237,10 +237,9 @@ class View
         foreach ($params as $uri => $text) {
             $breadcrumbs[$uri] = $text;
         }
-        if ($nested == true) {
-            $breadcrumbs = array_merge([Router::pathFor('home') => 'Home'], $breadcrumbs);
-        }
-        // $this->data['breadcrumbs'] = $breadcrumbs;
+        // if ($nested == true) {
+        //     $breadcrumbs = array_merge([Router::pathFor('home') => 'Home'], $breadcrumbs);
+        // }
         $this->setPageInfo(['breadcrumbs' => $breadcrumbs]);
         return $this;
     }

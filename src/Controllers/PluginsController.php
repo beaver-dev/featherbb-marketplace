@@ -11,8 +11,12 @@ class PluginsController {
     {
         $lastPlugins = PluginModel::getLatests();
 
-        return View::setPageInfo(['lastPlugins' => $lastPlugins])
-            ->addBreadcrumb(['plugins'])
+        return View::setPageInfo([
+                'lastPlugins' => $lastPlugins,
+                'title' => 'Plugins',
+                'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+            ])
+            ->addBreadcrumb([Router::pathFor('plugins') => 'Plugins'])
             ->addTemplate('plugins/index.php')
             ->display();
     }
@@ -21,8 +25,14 @@ class PluginsController {
     {
         $pendingPlugins = PluginModel::getPending();
 
-        return View::setPageInfo(['plugins' => $pendingPlugins])
-            ->addBreadcrumb(['plugins'])
+        return View::setPageInfo([
+                'plugins' => $pendingPlugins,
+                'title' => 'Pending plugins'
+            ])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                Router::pathFor('plugins.pending') => 'Pending'
+            ])
             ->addTemplate('plugins/pending.php')
             ->display();
     }
@@ -55,7 +65,7 @@ class PluginsController {
 
         if (PluginModel::downloadData($vendor_name) === false) {
             $notFoundHandler = Container::get('notFoundHandler');
-            return $notFoundHandler(Container::get('request'), Container::get('response'));
+            return $notFoundHandler($req, $res);
         }
         // If no errors, store generic infos to DB
         $plugin = PluginModel::accept($plugin_id, $vendor_name);
@@ -67,7 +77,7 @@ class PluginsController {
 
         if ($plugin === false) {
             $notFoundHandler = Container::get('notFoundHandler');
-            return $notFoundHandler(Container::get('request'), Container::get('response'));
+            return $notFoundHandler($req, $res);
         }
 
         $action = isset($args['action']) ? $args['action'] : 'description';
@@ -94,32 +104,13 @@ class PluginsController {
 
         if (!$plugin) {
             $notFoundHandler = Container::get('notFoundHandler');
-            return $notFoundHandler(Container::get('request'), Container::get('response'));
+            return $notFoundHandler($req, $res);
         }
 
         $plugin->nb_downloads = $plugin->nb_downloads+1;
         $plugin->save();
         $version = isset($args['version']) ? $args['version'] : 'master';
-        // https://api.github.com/repos/featherbb/private-messages/zipball/0.1.0
-        // https://api.github.com/repos/featherbb/private-messages/releases
         return Router::redirect('https://api.github.com/repos/featherbb/'.$plugin->vendor_name.'/zipball/'.$version);
-    }
-
-    public function history($req, $res, $args)
-    {
-        $plugin = PluginModel::getData($args['name']);
-
-        if ($plugin === false) {
-            $notFoundHandler = Container::get('notFoundHandler');
-            return $notFoundHandler(Container::get('request'), Container::get('response'));
-        }
-
-        $history = PluginModel::history($args['name']);
-
-        return View::setPageInfo(['plugin' => $plugin, 'markdown' => $markdown])
-            ->addBreadcrumb(['plugins'])
-            ->addTemplate('plugins/view.php')
-            ->display();
     }
 
     public function tags($req, $res, $args)

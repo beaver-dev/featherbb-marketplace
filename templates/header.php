@@ -82,4 +82,23 @@
     </div>
 </header>
 <section class="container">
+
+    <div class="linkst">
+        <div class="inbox crumbsplus">
+<?php if(isset($breadcrumbs)): ?>
+            <ul class="crumbs">
+                <li><a href="<?= Router::pathFor('home'); ?>">Home</a></li>
+<?php foreach($breadcrumbs as $url => $text): ?>
+                <li><span>»&#160;</span><?= is_string($url) ? '<a href="'.$url.'">' : ''; ?><?php if($text == end($breadcrumbs)): echo '<strong>'.$text.'</strong>'; else: echo $text; endif; ?><?= is_string($url) ? '</a>' : ''; ?></li>
+<?php endforeach; ?>
+            </ul>
+<?php endif; ?>
+            <div class="pagepost">
+    			<?php if(isset($pagination)): ?><p class="pagelink conl"><span class="pages-label">Pages: </span><strong class="item1">1</strong> <a href="/topic/62/featherbb-v100-beta-1/page/2/">2</a> <a href="/topic/62/featherbb-v100-beta-1/page/3/">3</a> <a href="/topic/62/featherbb-v100-beta-1/page/4/">4</a> <a rel="next" href="/topic/62/featherbb-v100-beta-1/page/2/">Next</a></p><?php endif; ?>
+                <?php if(isset($top_right_link)): ?><p class="postlink conr"><a href="<?= $top_right_link['url']; ?>"><?= $top_right_link['text']; ?></a></p><?php endif; ?>
+            </div>
+            <div class="clearer"></div>
+        </div>
+    </div>
+
     <div id="brdmain">

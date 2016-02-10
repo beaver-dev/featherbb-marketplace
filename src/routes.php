@@ -8,7 +8,6 @@ Route::group('/plugins', function () {
     Route::get('', 'App\Controllers\PluginsController:index')->setName('plugins');
     Route::get('/view/{name:[\w\-]+}[/{action:\w+}]', 'App\Controllers\PluginsController:view')->setName('plugins.view');
     Route::get('/download/{name:[\w\-]+}[/{version}]', 'App\Controllers\PluginsController:download')->setName('plugins.download');
-    Route::get('/history/{name:[\w\-]+}', 'App\Controllers\PluginsController:history')->setName('plugins.history');
 
     Route::map(['GET', 'POST'], '/create', 'App\Controllers\PluginsController:create')->setName('plugins.create');
     Route::map(['GET', 'POST'], '/pending', 'App\Controllers\PluginsController:pending')->setName('plugins.pending');
