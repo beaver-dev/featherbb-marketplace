@@ -26,7 +26,7 @@
 </div>
 <?php
 $tag_links = [];
-foreach (explode(',',$plugin->keywords) as $tag) {
+foreach ($plugin->keywords as $tag) {
     $tag_links[] = '<a href="'.Router::pathFor('plugins.tags', ['tag' => str_replace([' ', '.'], '-', $tag)]).'">'.$tag.'</a>';
 }
 ?>

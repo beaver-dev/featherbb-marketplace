@@ -72,12 +72,13 @@ class PluginsController {
 
         $action = isset($args['action']) ? $args['action'] : 'description';
 
+        $content = '';
         if ($action === 'history') {
             // $content = json_decode(GithubApi::getTags($args['name']));
             $content = GithubApi::getTags($args['name']);
-        } elseif (!isset($plugin->menu_content[$action])) {
+        } elseif (!isset($plugin->menu_content[$action]) && isset($plugin->menu_content['description'])) {
             $content = Markdown::defaultTransform($plugin->menu_content['description']);
-        } else {
+        } elseif (isset($plugin->menu_content[$action])) {
             $content = Markdown::defaultTransform($plugin->menu_content[$action]);
         }
 
@@ -119,6 +120,14 @@ class PluginsController {
             ->addBreadcrumb(['plugins'])
             ->addTemplate('plugins/view.php')
             ->display();
+    }
+
+    public function tags($req, $res, $args)
+    {
+        var_dump($args);
+        var_dump(str_replace('-', ' ', $args['tag']));
+        $plugin = ORM::for_table('plugins')->where_like('keywords', str_replace('-', ' ', '%'.$args['tag'].'%'))->find_many();
+        var_dump($plugin);
     }
 
 }
