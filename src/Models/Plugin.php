@@ -34,76 +34,40 @@ class Plugin
         $plugin->save();
     }
 
-    public static function history($vendor_name = '')
-    {
-        $tags = json_decode(Github::getTags($vendor_name));
-        $latest = $tags[0];
-        array_shift($tags);
-        return 'hist';
-    }
-
     public static function getPending()
     {
         $plugins = ORM::for_table('plugins')->where('status', 0)->find_many();
+        foreach ($plugins as $plugin) {
+            $vendor_name = str_replace([' ','.'], '-', $plugin->name);
+            $plugin->vendor_name = strtolower($vendor_name);
+        }
         return $plugins;
     }
 
-    public static function downloadData($vendor_name = '')
+    public static function downloadData($plugin_id, $vendor_name)
     {
-        // Prepare data for archive download
-        $uri = 'https://github.com/featherbb/'.$vendor_name.'/archive/master.zip';
-        $archive_path = getcwd()."/tmp/$vendor_name.zip";
-        $data_path = getcwd()."/pluginsdata/$vendor_name/";
+        // Get main files from Github
+        $composer = Github::getContent($vendor_name, 'composer.json');
+        $featherbb = Github::getContent($vendor_name, 'featherbb.json');
+        $readme = true;
+        // $readme = Github::getContent($vendor_name, 'README.md');
 
-        // Download archive in tmp folder
-        file_put_contents($archive_path, file_get_contents($uri));
-
-        // Remove old files if present
-        if (!is_dir($data_path))
-            mkdir($data_path);
-        emptyDir($data_path);
-
-        $zip = new \ZipArchive;
-        if ($zip->open($archive_path) === true) {
-
-            // Move needed files to pluginsdata folder
-            for($i = 0; $i < $zip->numFiles; $i++) {
-                $filename = str_replace($vendor_name.'-master/', '', $zip->getNameIndex($i));
-                // Filter files to move
-                if ($filename === 'composer.json' || $filename === 'README.md' || substr($filename, 0, 6) === 'assets') {
-                    $zip->renameIndex($i, $filename);
-                    $zip->extractTo($data_path, array($zip->getNameIndex($i)));
-                }
-            }
-            $zip->close();
-            $result = $vendor_name;
-        } else {
-            $result = false;
+        if ($composer === false || $featherbb === false || $readme === false) {
+            return false;
         }
 
-        unlink($archive_path);
+        $description = json_decode($composer)->description;
+        $keywords = serialize(json_decode($composer)->keywords);
 
-        return $result;
-    }
-
-    public static function accept($plugin_id, $vendor_name)
-    {
-        $plugin = false;
-
-        if (file_exists(getcwd()."/pluginsdata/$vendor_name/composer.json")) {
-            $composer = file_get_contents(getcwd()."/pluginsdata/$vendor_name/composer.json");
-            $description = json_decode($composer)->description;
-            $keywords = serialize(json_decode($composer)->keywords);
-
-            $plugin = ORM::for_table('plugins')->find_one($plugin_id);
-            if ($plugin !== false) {
-                $plugin->homepage = 'https://github.com/featherbb/'.$vendor_name;
-                $plugin->status = 2;
-                $plugin->vendor_name = $vendor_name;
-                $plugin->description = $description;
-                $plugin->keywords = $keywords;
-                $plugin->save();
-            }
+        $plugin = ORM::for_table('plugins')->find_one($plugin_id);
+        if ($plugin !== false) {
+            $plugin->homepage = 'https://github.com/featherbb/'.$vendor_name;
+            $plugin->status = 2;
+            $plugin->vendor_name = $vendor_name;
+            $plugin->description = $description;
+            $plugin->keywords = $keywords;
+            $plugin->readme = $readme;
+            $plugin->save();
         }
 
         return $plugin;
@@ -113,16 +77,11 @@ class Plugin
     {
         $plugin = ORM::for_table('plugins')->where('vendor_name', $vendor_name)->find_one();
 
-        if (file_exists(getcwd()."/pluginsdata/$vendor_name/composer.json") && $plugin !== false) {
-            $composer = file_get_contents(getcwd()."/pluginsdata/$vendor_name/composer.json");
-            $plugin->composer = json_decode($composer);
-            // $plugin->readme = file_get_contents(getcwd()."/pluginsdata/$vendor_name/README.md");
-
-            // Get menu items to display in plugin infos...
+        if ($plugin !== false) {
+            // Get menu items to display in plugin infos (remove first item of array which is h1 and not h2)...
             preg_match_all('/\s\s#{2} (.+)/S', $plugin->readme, $plugin_menus, PREG_PATTERN_ORDER);
             if (isset($plugin_menus[1])) {
                 $plugin->menus = $plugin_menus[1];
-                // var_dump($plugin_menus[1]);
             }
 
             // Parse readme to get each h2 body content...
@@ -132,7 +91,6 @@ class Plugin
             }
 
             array_shift($results);
-            // var_dump($results);
 
             // And associate h2 menu items with their content as an array
             $menu_content = [];
@@ -143,8 +101,6 @@ class Plugin
             $plugin->menu_content = $menu_content;
 
             $plugin->keywords = unserialize($plugin->keywords);
-        } else {
-            $plugin = false;
         }
 
         return $plugin;

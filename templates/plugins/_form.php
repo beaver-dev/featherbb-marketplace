@@ -1,13 +1,16 @@
-            			<div class="inform">
-                            <div class="row">
-                                <div class="five columns">
-                                    <label for="name">Name</label>
-                                    <input class="u-full-width" placeholder="Private Messages" id="name" name="name" type="text" value="<?= isset(Request::getParsedBody()['name']) ? Request::getParsedBody()['name'] : ''; ?>" required>
+                        <div class="inform">
+                            <fieldset>
+                                <legend>Enter your plugin infos and submit</legend>
+                                <div class="infldset txtarea">
+                                    <label class="required">
+                                        <strong>Plugin name <span>(Required)</span></strong><br />
+                                        <input class="longinput" type="text" name="name" value="<?= isset(Request::getParsedBody()['name']) ? Request::getParsedBody()['name'] : ''; ?>" size="80" maxlength="70" tabindex="1" required><br/>
+                                    </label>
+                                    <label class="required">
+                                        <strong>Repository URL <span>(Required)</span></strong><br />
+                                        <input class="longinput" type="url" name="homepage" value="<?= isset(Request::getParsedBody()['homepage']) ? Request::getParsedBody()['homepage'] : ''; ?>" size="80" maxlength="70" tabindex="2" pattern="https://github\.com/[\w\-]+/[\w\-]+" required><br/>
+                                    </label>
                                 </div>
-                                <div class="seven columns">
-                                    <label for="homepage">Repository URL</label>
-                                    <input class="u-full-width" placeholder="https://github.com/username/plugin-name" id="homepage" name="homepage" value="<?= isset(Request::getParsedBody()['homepage']) ? Request::getParsedBody()['homepage'] : ''; ?>" type="url" pattern="https://github\.com/[\w\-]+/[\w\-]+" required>
-                                </div>
-                            </div>
-            			</div>
-            			<input type="submit" name="submit" value="Submit" tabindex="3" accesskey="s" class="u-full-width button-primary" />
+                            </fieldset>
+                        </div>
+                        <p class="buttons"><input type="submit" name="submit" value="Submit" tabindex="3" accesskey="s" /></p>

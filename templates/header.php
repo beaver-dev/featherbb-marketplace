@@ -65,13 +65,13 @@
                 <div id="brdwelcome" class="inbox">
                     <ul class="conl">
                         <li>
-                            <span>
-                            Logged in as
-                            <strong>adaur</strong>
-                            </span>
+                            <span>Logged in as <strong>adaur</strong></span>
                         </li>
                         <li>
                             <span>Last visit: Yesterday 20:32:26</span>
+                        </li>
+                        <li class="reportlink">
+                            <span><strong><a href="<?= Router::pathFor('plugins.pending'); ?>">View pending plugins</a></strong></span>
                         </li>
                     </ul>
                     <div class="clearer"></div>

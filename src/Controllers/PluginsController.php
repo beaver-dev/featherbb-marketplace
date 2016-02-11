@@ -16,7 +16,7 @@ class PluginsController {
                 'title' => 'Plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
-            ->addBreadcrumb([Router::pathFor('plugins') => 'Plugins'])
+            ->addBreadcrumb(['Plugins'])
             ->addTemplate('plugins/index.php')
             ->display();
     }
@@ -31,7 +31,7 @@ class PluginsController {
             ])
             ->addBreadcrumb([
                 Router::pathFor('plugins') => 'Plugins',
-                Router::pathFor('plugins.pending') => 'Pending'
+                'Pending'
             ])
             ->addTemplate('plugins/pending.php')
             ->display();
@@ -53,6 +53,10 @@ class PluginsController {
         }
         // Display view
         return View::setPageInfo($data)
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                'Submit new plugin'
+            ])
             ->addTemplate('plugins/create.php')
             ->display();
     }
@@ -63,12 +67,28 @@ class PluginsController {
         $vendor_name = Request::getParsedBody()['vendor_name'];
         $plugin_id = Request::getParsedBody()['plugin_id'];
 
-        if (PluginModel::downloadData($vendor_name) === false) {
+        // Check required fields are sent from form
+        if (!isset($vendor_name) || !isset($plugin_id)) {
             $notFoundHandler = Container::get('notFoundHandler');
             return $notFoundHandler($req, $res);
         }
-        // If no errors, store generic infos to DB
-        $plugin = PluginModel::accept($plugin_id, $vendor_name);
+
+        // Check vendor name is unique
+        if (ORM::for_table('plugins')->where('vendor_name', $vendor_name)->count() > 0) {
+            return 'Vendor name already exists!';
+        }
+
+        if (isset(Request::getParsedBody()['accept_plugin'])) {
+            // If no errors while getting data from Github, store generic infos to DB, else throw 404
+            if (PluginModel::downloadData($plugin_id, $vendor_name) === false) {
+                $notFoundHandler = Container::get('notFoundHandler');
+                return $notFoundHandler($req, $res);
+            }
+        } elseif (isset(Request::getParsedBody()['delete_plugin'])) {
+            // TODO: Remove plugin from DB
+        }
+
+        return Router::redirect(Router::pathFor('plugins.pending'));
     }
 
     public function view($req, $res, $args)
