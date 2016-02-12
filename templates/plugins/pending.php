@@ -50,11 +50,11 @@
 <?php foreach ($plugins as $key => $plugin): ?>
                                 <tr class="<?= ($key % 2 == 0) ? 'rowodd' : 'roweven'; ?> plugin-row">
                                     <td class="tcl">
-                                        <input type="checkbox" name="plugin_id[<?= $plugin->id; ?>]" value="<?= $plugin->vendor_name; ?>" form="accept-form">
-                                        <a href="<?= $plugin->homepage; ?>" target="_blank"><?= $plugin->name; ?></a>
+                                        <input type="checkbox" name="plugin_id[<?= htmlspecialchars($plugin->id); ?>]" value="<?= htmlspecialchars($plugin->vendor_name); ?>" form="accept-form">
+                                        <a href="<?= htmlspecialchars($plugin->homepage); ?>" target="_blank"><?= htmlspecialchars($plugin->name); ?></a>
                                     </td>
                                     <td class="tcr">
-                                        <?= $plugin->vendor_name; ?>
+                                        <?= htmlspecialchars($plugin->vendor_name); ?>
                                     </td>
                                 </tr>
 <?php endforeach; ?>

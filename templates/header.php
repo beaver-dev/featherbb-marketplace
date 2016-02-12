@@ -41,9 +41,8 @@
                     </ul>
                 </div>
                 <div class="navbar-right">
-                    <form class="nav-search" action="/search" method="get">
-                        <input type="hidden" value="search" name="action">
-                        <input type="text" placeholder="Search" maxlength="100" size="20" name="keywords">
+                    <form class="nav-search" action="/plugins/search" method="get">
+                        <input type="text" placeholder="Search" maxlength="100" size="20" name="keywords" value="<?php if (isset(Request::getQueryParams()['keywords'])) echo htmlspecialchars(Request::getQueryParams()['keywords']); ?>">
                     </form>
                 </div>
             </div>
@@ -94,7 +93,7 @@
             </ul>
 <?php endif; ?>
             <div class="pagepost">
-    			<?php if(isset($pagination)): ?><p class="pagelink conl"><span class="pages-label">Pages: </span><strong class="item1">1</strong> <a href="/topic/62/featherbb-v100-beta-1/page/2/">2</a> <a href="/topic/62/featherbb-v100-beta-1/page/3/">3</a> <a href="/topic/62/featherbb-v100-beta-1/page/4/">4</a> <a rel="next" href="/topic/62/featherbb-v100-beta-1/page/2/">Next</a></p><?php endif; ?>
+    			<?php if(isset($pagination)): ?><p class="pagelink conl"><span class="pages-label">Pages: </span><strong class="item1">1</strong> <a href="">2</a> <a href="">3</a> <a href="">4</a> <a rel="next" href="">Next</a></p><?php endif; ?>
                 <?php if(isset($top_right_link)): ?><p class="postlink conr"><a href="<?= $top_right_link['url']; ?>"><?= $top_right_link['text']; ?></a></p><?php endif; ?>
             </div>
             <div class="clearer"></div>

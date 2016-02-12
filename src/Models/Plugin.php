@@ -56,14 +56,17 @@ class Plugin
             return false;
         }
 
-        $description = json_decode($composer)->description;
-        $keywords = serialize(json_decode($composer)->keywords);
+        $composerDecoded = json_decode($composer);
+        $featherDecoded = json_decode($featherbb);
+        $description = $composerDecoded->description;
+        $keywords = serialize($composerDecoded->keywords);
 
         $plugin = ORM::for_table('plugins')->find_one($plugin_id);
         if ($plugin !== false) {
             $plugin->homepage = 'https://github.com/featherbb/'.$vendor_name;
             $plugin->status = 2;
             $plugin->vendor_name = $vendor_name;
+            $plugin->author = $featherDecoded->author->name;
             $plugin->description = $description;
             $plugin->keywords = $keywords;
             $plugin->readme = $readme;
@@ -104,6 +107,25 @@ class Plugin
         }
 
         return $plugin;
+    }
+
+    public static function getTags($tags)
+    {
+        $plugins = ORM::for_table('plugins')->where_like('keywords', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
+        return $plugins;
+    }
+
+    public static function getAuthor($tags)
+    {
+        $plugins = ORM::for_table('plugins')->where_like('author', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
+        return $plugins;
+    }
+
+    public static function getSearch($search)
+    {
+        $plugins = ORM::for_table('plugins')->raw_query('SELECT * FROM plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
+
+        return $plugins;
     }
 
 }

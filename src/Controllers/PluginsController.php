@@ -135,10 +135,50 @@ class PluginsController {
 
     public function tags($req, $res, $args)
     {
-        var_dump($args);
-        var_dump(str_replace('-', ' ', $args['tag']));
-        $plugin = ORM::for_table('plugins')->where_like('keywords', str_replace('-', ' ', '%'.$args['tag'].'%'))->find_many();
-        var_dump($plugin);
+        $plugins = PluginModel::getTags($args['tag']);
+
+        return View::setPageInfo([
+            'lastPlugins' => $plugins,
+            'title' => 'Tags',
+            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+        ])
+            ->addBreadcrumb(['Plugins'])
+            ->addTemplate('plugins/index.php')
+            ->display();
+    }
+
+    public function author($req, $res, $args)
+    {
+        $plugins = PluginModel::getAuthor($args['author']);
+
+        return View::setPageInfo([
+            'lastPlugins' => $plugins,
+            'title' => 'Author',
+            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+        ])
+            ->addBreadcrumb(['Plugins'])
+            ->addTemplate('plugins/index.php')
+            ->display();
+    }
+
+    public function search($req, $res, $args)
+    {
+        if (isset(Request::getQueryParams()['keywords'])) {
+            $plugins = PluginModel::getSearch(Request::getQueryParams()['keywords']);
+        }
+        else {
+            $notFoundHandler = Container::get('notFoundHandler');
+            return $notFoundHandler($req, $res);
+        }
+
+        return View::setPageInfo([
+            'lastPlugins' => $plugins,
+            'title' => 'Search',
+            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+        ])
+            ->addBreadcrumb(['Plugins'])
+            ->addTemplate('plugins/index.php')
+            ->display();
     }
 
 }

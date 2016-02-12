@@ -14,6 +14,8 @@ Route::group('/plugins', function () {
     Route::post('/accept', 'App\Controllers\PluginsController:accept')->setName('plugins.accept');
 
     Route::get('/tags/{tag}', 'App\Controllers\PluginsController:tags')->setName('plugins.tags');
+    Route::get('/search', 'App\Controllers\PluginsController:search')->setName('plugins.search');
+    Route::get('/author/{author}', 'App\Controllers\PluginsController:author')->setName('plugins.author');
 
     // Route::map(['GET', 'POST'], '/update', 'App\Controllers\PluginsController:update')->setName('plugins.update');
     // Route::map(['GET', 'POST'], '/destroy', 'App\Controllers\PluginsController:destroy')->setName('plugins.destroy');
