@@ -58,8 +58,6 @@ class Plugin
 
         $composerDecoded = json_decode($composer);
         $featherDecoded = json_decode($featherbb);
-        $description = $composerDecoded->description;
-        $keywords = serialize($composerDecoded->keywords);
 
         $plugin = ORM::for_table('plugins')->find_one($plugin_id);
         if ($plugin !== false) {
@@ -67,8 +65,9 @@ class Plugin
             $plugin->status = 2;
             $plugin->vendor_name = $vendor_name;
             $plugin->author = $featherDecoded->author->name;
-            $plugin->description = $description;
-            $plugin->keywords = $keywords;
+            $plugin->last_version = $featherDecoded->version;
+            $plugin->description = $composerDecoded->description;
+            $plugin->keywords = serialize($composerDecoded->keywords);
             $plugin->readme = $readme;
             $plugin->save();
         }
