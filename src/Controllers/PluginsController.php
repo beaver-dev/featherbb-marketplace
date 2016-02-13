@@ -9,10 +9,10 @@ class PluginsController {
 
     public function index($req, $res, $args)
     {
-        $lastPlugins = PluginModel::getLatests();
+        $plugins = PluginModel::getLatests();
 
         return View::setPageInfo([
-                'lastPlugins' => $lastPlugins,
+                'plugins' => $plugins,
                 'title' => 'Plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
@@ -163,11 +163,14 @@ class PluginsController {
         $plugins = PluginModel::getTags($args['tag']);
 
         return View::setPageInfo([
-            'lastPlugins' => $plugins,
-            'title' => 'Tags',
-            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
-        ])
-            ->addBreadcrumb(['Plugins'])
+                'plugins' => $plugins,
+                'title' => 'Tags',
+                'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+            ])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                'Search by tags'
+            ])
             ->addTemplate('plugins/index.php')
             ->display();
     }
@@ -177,11 +180,14 @@ class PluginsController {
         $plugins = PluginModel::getAuthor($args['author']);
 
         return View::setPageInfo([
-            'lastPlugins' => $plugins,
-            'title' => 'Author',
-            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
-        ])
-            ->addBreadcrumb(['Plugins'])
+                'plugins' => $plugins,
+                'title' => 'Author',
+                'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+            ])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                'Authored by '.htmlspecialchars($args['author'])
+            ])
             ->addTemplate('plugins/index.php')
             ->display();
     }
@@ -197,11 +203,14 @@ class PluginsController {
         }
 
         return View::setPageInfo([
-            'lastPlugins' => $plugins,
-            'title' => 'Search',
-            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
-        ])
-            ->addBreadcrumb(['Plugins'])
+                'plugins' => $plugins,
+                'title' => 'Search',
+                'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+            ])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                'Search'
+            ])
             ->addTemplate('plugins/index.php')
             ->display();
     }

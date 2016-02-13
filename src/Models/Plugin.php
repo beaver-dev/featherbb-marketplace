@@ -122,7 +122,7 @@ class Plugin
 
     public static function getSearch($search)
     {
-        $plugins = ORM::for_table('market_plugins')->raw_query('SELECT * FROM plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
+        $plugins = ORM::for_table('market_plugins')->raw_query('SELECT * FROM market_plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
 
         return $plugins;
     }
