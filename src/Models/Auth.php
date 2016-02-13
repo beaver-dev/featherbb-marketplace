@@ -23,11 +23,6 @@ class Auth
                     ->where($result['where'])
                     ->find_one();
         return $result;
-        // $result = $result->find_result_set();
-        //
-        // foreach ($result as $user) {
-        //     return $user;
-        // }
     }
 
     public static function get_user_from_name($username)

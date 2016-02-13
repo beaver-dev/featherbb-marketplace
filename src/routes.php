@@ -23,4 +23,5 @@ Route::group('/plugins', function () {
 
 Route::group('/auth', function() {
     Route::map(['GET', 'POST'], '', 'App\Controllers\AuthController:login')->setName('login');
+    Route::get('/logout', 'App\Controllers\AuthController:logout')->setName('logout');
 });

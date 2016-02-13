@@ -35,9 +35,18 @@
                         <li id="navsearch">
                             <a href="<?= Router::pathFor('home') ?>">Themes</a>
                         </li>
-                        <li id="navprofile">
-                            <a href="<?= Router::pathFor('home') ?>">Languages</a>
+                        <li id="navforum">
+                            <a href="http://forums.featherbb.org" target="_blank">Forum</a>
                         </li>
+<?php if($user->is_guest): ?>
+                        <li id="navlogin">
+                            <a href="<?= Router::pathFor('login') ?>">Login</a>
+                        </li>
+<?php else: ?>
+                        <li id="navlogout">
+                            <a href="<?= Router::pathFor('logout') ?>">Logout</a>
+                        </li>
+<?php endif; ?>
                     </ul>
                 </div>
                 <div class="navbar-right">
@@ -63,15 +72,20 @@
             <div class="status-avatar">
                 <div id="brdwelcome" class="inbox">
                     <ul class="conl">
+<?php if(!$user->is_guest): ?>
                         <li>
                             <span>Logged in as <strong><?= $user->username; ?></strong></span>
                         </li>
-                        <li>
-                            <span>Last visit: Yesterday 20:32:26</span>
-                        </li>
-                        <li class="reportlink">
+<?php if($user->is_admmod): ?>
+                        <li class="pendinglink">
                             <span><strong><a href="<?= Router::pathFor('plugins.pending'); ?>">View pending plugins</a></strong></span>
                         </li>
+<?php endif; ?>
+<?php else: ?>
+                        <li>
+                            <span>You are not logged in.</span>
+                        </li>
+<?php endif; ?>
                     </ul>
                     <div class="clearer"></div>
                 </div>

@@ -23,25 +23,25 @@ App::add(function($req, $res, $next) {
 });
 
 // Load plugins hooks
-App::add(function($req, $res, $next) {
-    $pluginClasses = [
-        '\App\Test'
-    ];
-    foreach ($pluginClasses as $pluginClass) {
-        $plugin = new $pluginClass();
-        // Check if plugin implements default plugins structure
-        if (!$plugin instanceof \App\Core\PluginInterface) {
-            $warning = [
-                'pluginClass' => $pluginClass,
-                'message' => 'All plugins must implement "App\Core\PluginInterface".'
-            ];
-            Container::get('hooks')->fire('plugin.warning', $warning);
-        }
-        else {
-            Container::get('hooks')->fire('plugin.launch', $pluginClass);
-            $plugin->attachEvents();
-        }
-    }
-
-    return $next($req, $res);
-});
+// App::add(function($req, $res, $next) {
+//     $pluginClasses = [
+//         '\App\Test'
+//     ];
+//     foreach ($pluginClasses as $pluginClass) {
+//         $plugin = new $pluginClass();
+//         // Check if plugin implements default plugins structure
+//         if (!$plugin instanceof \App\Core\PluginInterface) {
+//             $warning = [
+//                 'pluginClass' => $pluginClass,
+//                 'message' => 'All plugins must implement "App\Core\PluginInterface".'
+//             ];
+//             Container::get('hooks')->fire('plugin.warning', $warning);
+//         }
+//         else {
+//             Container::get('hooks')->fire('plugin.launch', $pluginClass);
+//             $plugin->attachEvents();
+//         }
+//     }
+//
+//     return $next($req, $res);
+// });

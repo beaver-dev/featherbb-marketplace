@@ -44,4 +44,10 @@ class AuthController
                 ->display();
         }
     }
+
+    function logout($req, $res, $args)
+    {
+        AuthModel::feather_setcookie('', 1);
+        return Router::redirect(Router::pathFor('home'));
+    }
 }
