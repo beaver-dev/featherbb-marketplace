@@ -64,7 +64,7 @@
                 <div id="brdwelcome" class="inbox">
                     <ul class="conl">
                         <li>
-                            <span>Logged in as <strong>adaur</strong></span>
+                            <span>Logged in as <strong><?= $user->username; ?></strong></span>
                         </li>
                         <li>
                             <span>Last visit: Yesterday 20:32:26</span>

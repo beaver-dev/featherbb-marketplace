@@ -12,11 +12,8 @@ Container::set('hooks', function($c) {
     return new \App\Core\Hooks;
 });
 
-// user
-// Container::set('user', function ($c){
-//     $user = new \App\Middleware\Auth(Request::getHeaders());
-//     if ($user->isLogged()) {
-//         # code...
-//     }
-//     return $user;
-// });
+// cookies
+Container::set('cookie', function($c){
+    $request = $c->get('request');
+    return new \Slim\Http\Cookies($request->getCookieParams());
+});

@@ -7,7 +7,9 @@ use ORM;
 
 // CSRF protection
 App::add(new \App\Middleware\Csrf);
-// App::add(new \App\Middleware\Core);
+
+// Auth infos
+App::add(new \App\Middleware\Auth);
 
 // Init database
 App::add(function($req, $res, $next) {

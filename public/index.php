@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Interfaces\SlimStatic;
+use App\Core\Random;
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -21,8 +22,14 @@ require __DIR__ . '/../vendor/autoload.php';
 session_start();
 
 // Instantiate the app
-$settings = require __DIR__ . '/../src/settings.php';
-$app = new Slim\App($settings);
+$settings = __DIR__ . '/../config/settings.php';
+if (!is_file($settings)) {
+    $defaults = require __DIR__ . '/../config/settings.php.dist';
+    $defaults['settings']['jwt']['key'] = base64_encode(Random::secure_random_bytes(64));
+    file_put_contents($settings, '<?php'."\n".'return '.var_export($defaults, true).';');
+}
+
+$app = new Slim\App(require $settings);
 SlimStatic::boot($app);
 // Allow static proxies to be called from anywhere in App
 Statical::addNamespace('*', 'App\\*', 'App\\Controllers\\*', 'App\\Models\\*', 'App\\Middleware\\*', 'App\\Plugins\\*');

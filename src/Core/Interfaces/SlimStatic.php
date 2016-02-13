@@ -55,7 +55,6 @@ class SlimStatic
     {
         $services = array(
             'Input' => 'request',
-            // 'Log' => 'log',
             'Request' => 'request',
             'Response' => 'response',
             'View'     => 'view',

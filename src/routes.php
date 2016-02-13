@@ -20,3 +20,7 @@ Route::group('/plugins', function () {
     // Route::map(['GET', 'POST'], '/update', 'App\Controllers\PluginsController:update')->setName('plugins.update');
     // Route::map(['GET', 'POST'], '/destroy', 'App\Controllers\PluginsController:destroy')->setName('plugins.destroy');
 });
+
+Route::group('/auth', function() {
+    Route::map(['GET', 'POST'], '', 'App\Controllers\AuthController:login')->setName('login');
+});
