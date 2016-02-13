@@ -23,6 +23,13 @@ class PluginsController {
 
     public function pending($req, $res, $args)
     {
+        // Ensure user is admmod on forum
+        $user = $req->getAttribute('user');
+        if (!$user->is_admmod) {
+            $notFoundHandler = Container::get('notFoundHandler');
+            return $notFoundHandler($req, $res);
+        }
+
         $pendingPlugins = PluginModel::getPending();
 
         return View::setPageInfo([
@@ -39,15 +46,26 @@ class PluginsController {
 
     public function create($req, $res, $args)
     {
+        // Ensure user is logged
+        $user = $req->getAttribute('user');
+        if ($user->is_guest) {
+            return Router::redirect(Router::pathFor('login'));
+        }
+
         // Prepare base data to send to view
         $data = [];
         if (Request::isPost()) {
+            $plugin = [
+                'homepage' => Request::getParsedBody()['homepage'],
+                'name' => Request::getParsedBody()['name'],
+                'author' => $user->username
+            ];
             // Check if plugin is valid
-            $validate = PluginModel::validate(Request::getParsedBody());
+            $validate = PluginModel::validate($plugin);
             if ($validate !== true) {
                 $data['errors'] = $validate;
             } else {
-                PluginModel::create(Request::getParsedBody());
+                PluginModel::create($plugin);
                 return Router::redirect(Router::pathFor('plugins.create'));
             }
         }
@@ -63,6 +81,13 @@ class PluginsController {
 
     public function accept($req, $res, $args)
     {
+        // Ensure user is admmod on forum
+        $user = $req->getAttribute('user');
+        if (!$user->is_admmod) {
+            $notFoundHandler = Container::get('notFoundHandler');
+            return $notFoundHandler($req, $res);
+        }
+
         // Download archive and store info files to disk
         $vendor_name = Request::getParsedBody()['vendor_name'];
         $plugin_id = Request::getParsedBody()['plugin_id'];
@@ -74,7 +99,7 @@ class PluginsController {
         }
 
         // Check vendor name is unique
-        if (ORM::for_table('plugins')->where('vendor_name', $vendor_name)->count() > 0) {
+        if (ORM::for_table('market_plugins')->where('vendor_name', $vendor_name)->count() > 0) {
             return 'Vendor name already exists!';
         }
 
@@ -120,7 +145,7 @@ class PluginsController {
 
     public function download($req, $res, $args)
     {
-        $plugin = ORM::for_table('plugins')->where('vendor_name', $args['name'])->find_one();
+        $plugin = ORM::for_table('market_plugins')->where('vendor_name', $args['name'])->find_one();
 
         if (!$plugin) {
             $notFoundHandler = Container::get('notFoundHandler');

@@ -11,7 +11,7 @@ class Plugin
 
     public static function getLatests()
     {
-        $plugins = ORM::for_table('plugins')->where('status', 2)->limit(10);
+        $plugins = ORM::for_table('market_plugins')->where('status', 2)->limit(10);
         Container::get('hooks')->fireDB('model.plugins.getLatest', $plugins);
         $plugins = $plugins->find_many();
 
@@ -26,17 +26,18 @@ class Plugin
 
     public static function create($data)
     {
-        $plugin = ORM::for_table('plugins')->create();
+        $plugin = ORM::for_table('market_plugins')->create();
 
         $plugin->homepage = $data['homepage'];
         $plugin->name = $data['name'];
+        $plugin->author = $data['author'];
 
         $plugin->save();
     }
 
     public static function getPending()
     {
-        $plugins = ORM::for_table('plugins')->where('status', 0)->find_many();
+        $plugins = ORM::for_table('market_plugins')->where('status', 0)->find_many();
         foreach ($plugins as $plugin) {
             $vendor_name = str_replace([' ','.'], '-', $plugin->name);
             $plugin->vendor_name = strtolower($vendor_name);
@@ -49,8 +50,7 @@ class Plugin
         // Get main files from Github
         $composer = Github::getContent($vendor_name, 'composer.json');
         $featherbb = Github::getContent($vendor_name, 'featherbb.json');
-        $readme = true;
-        // $readme = Github::getContent($vendor_name, 'README.md');
+        $readme = Github::getContent($vendor_name, 'README.md');
 
         if ($composer === false || $featherbb === false || $readme === false) {
             return false;
@@ -59,12 +59,12 @@ class Plugin
         $composerDecoded = json_decode($composer);
         $featherDecoded = json_decode($featherbb);
 
-        $plugin = ORM::for_table('plugins')->find_one($plugin_id);
+        $plugin = ORM::for_table('market_plugins')->find_one($plugin_id);
         if ($plugin !== false) {
             $plugin->homepage = 'https://github.com/featherbb/'.$vendor_name;
             $plugin->status = 2;
             $plugin->vendor_name = $vendor_name;
-            $plugin->author = $featherDecoded->author->name;
+            // $plugin->author = $featherDecoded->author->name;
             $plugin->last_version = $featherDecoded->version;
             $plugin->description = $composerDecoded->description;
             $plugin->keywords = serialize($composerDecoded->keywords);
@@ -77,7 +77,7 @@ class Plugin
 
     public static function getData($vendor_name = '')
     {
-        $plugin = ORM::for_table('plugins')->where('vendor_name', $vendor_name)->find_one();
+        $plugin = ORM::for_table('market_plugins')->where('vendor_name', $vendor_name)->find_one();
 
         if ($plugin !== false) {
             // Get menu items to display in plugin infos (remove first item of array which is h1 and not h2)...
@@ -110,19 +110,19 @@ class Plugin
 
     public static function getTags($tags)
     {
-        $plugins = ORM::for_table('plugins')->where_like('keywords', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
+        $plugins = ORM::for_table('market_plugins')->where_like('keywords', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
         return $plugins;
     }
 
     public static function getAuthor($tags)
     {
-        $plugins = ORM::for_table('plugins')->where_like('author', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
+        $plugins = ORM::for_table('market_plugins')->where_like('author', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
         return $plugins;
     }
 
     public static function getSearch($search)
     {
-        $plugins = ORM::for_table('plugins')->raw_query('SELECT * FROM plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
+        $plugins = ORM::for_table('market_plugins')->raw_query('SELECT * FROM plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
 
         return $plugins;
     }

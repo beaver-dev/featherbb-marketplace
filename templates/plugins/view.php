@@ -20,6 +20,6 @@ foreach ($plugin->keywords as $tag) {
     </div>
 
     <div class="plugin-body">
-        <?= htmlspecialchars($content); ?>
+        <?= $content; ?>
     </div>
 </div>
