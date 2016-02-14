@@ -14,6 +14,9 @@ class Plugin
         $plugins = ORM::for_table('market_plugins')->where('status', 2)->limit(10);
         Container::get('hooks')->fireDB('model.plugins.getLatest', $plugins);
         $plugins = $plugins->find_many();
+        foreach ($plugins as $plugin) {
+            $plugin->last_update = (isset($plugin->last_update) && $plugin->last_update > 0) ? date('Y-m-d', $plugin->last_update) : 'Never';
+        }
 
         return $plugins;
     }
@@ -64,8 +67,8 @@ class Plugin
             $plugin->homepage = 'https://github.com/featherbb/'.$vendor_name;
             $plugin->status = 2;
             $plugin->vendor_name = $vendor_name;
-            // $plugin->author = $featherDecoded->author->name;
             $plugin->last_version = $featherDecoded->version;
+            $plugin->last_update = time();
             $plugin->description = $composerDecoded->description;
             $plugin->keywords = serialize($composerDecoded->keywords);
             $plugin->readme = $readme;
@@ -102,6 +105,8 @@ class Plugin
             }
             $plugin->menu_content = $menu_content;
 
+            $plugin->last_update = (isset($plugin->last_update) && $plugin->last_update > 0) ? date('Y-m-d', $plugin->last_update) : 'Never';
+
             $plugin->keywords = unserialize($plugin->keywords);
         }
 
@@ -123,7 +128,6 @@ class Plugin
     public static function getSearch($search)
     {
         $plugins = ORM::for_table('market_plugins')->raw_query('SELECT * FROM market_plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
-
         return $plugins;
     }
 

@@ -1887,7 +1887,14 @@ th {
 .plugin-head h2 small {
     font-family: Arial, Helvetica, sans-serif;
     margin-left: 10px;
-
+    font-size: 0.5em;
+    color: #333;
+}
+.plugin-head h2 .plugin-last-update {
+    float: right;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-style: italic;
     font-size: 0.5em;
     color: #333;
 }
@@ -1911,3 +1918,17 @@ th {
     text-transform: uppercase;
     white-space: nowrap;
 }
+.button:hover,
+.button:focus, {
+  color: #333;
+  border-color: #888;
+  outline: 0; }
+.button.button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0; }
+.button.button-primary:hover,
+.button.button-primary:focus, {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }

@@ -154,6 +154,22 @@ class PluginsController {
             ->display();
     }
 
+    public function update($req, $res, $args)
+    {
+        $plugin = PluginModel::getData($args['name']);
+        $user = $req->getAttribute('user');
+
+        // Ensure plugin exists and user has rights to update it
+        if (!$plugin || ($plugin->author != $user->username && !$user->is_admmod)) {
+            $notFoundHandler = Container::get('notFoundHandler');
+            return $notFoundHandler($req, $res);
+        }
+
+        PluginModel::downloadData($plugin->id, $plugin->vendor_name);
+
+        return Router::redirect(Router::pathFor('plugins.view', ['name' => $plugin->vendor_name]), 'Plugin updated!');
+    }
+
     public function download($req, $res, $args)
     {
         $plugin = ORM::for_table('market_plugins')->where('vendor_name', $args['name'])->find_one();

@@ -34,7 +34,7 @@
                                 </td>
                                 <td class="tc2"><?= htmlspecialchars($plugin->nb_downloads); ?></td>
                                 <td class="tcr">
-                                    <a href="<?= Router::pathFor('plugins.download', ['name'=>$plugin->vendor_name,'version'=>$plugin->last_version]); ?>" title="Download last version"><?= isset($plugin->last_version) ? htmlspecialchars($plugin->last_version) : ''; ?></a>
+                                    <a href="<?= Router::pathFor('plugins.download', ['name'=>$plugin->vendor_name,'version'=>$plugin->last_version]); ?>" title="Download last version"><?= isset($plugin->last_version) ? htmlspecialchars($plugin->last_version) : ''; ?></a><br>
                                     <span><?= htmlspecialchars($plugin->last_update); ?></span>
                                 </td>
                             </tr>
