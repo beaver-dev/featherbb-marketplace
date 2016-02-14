@@ -105,11 +105,17 @@ class PluginsController {
             return 'Vendor name already exists!';
         }
 
+        $repoURL = PluginModel::getUser($vendor_name);
+        $userGit = explode('/', str_ireplace(array('http://', 'https://'), '', $repoURL));
+
         if (Input::post('accept_plugin')) {
             // If no errors while getting data from Github, store generic infos to DB, else throw 404
-            if (PluginModel::downloadData($plugin_id, $vendor_name) === false) {
+            if (PluginModel::downloadData($plugin_id, $vendor_name, $userGit[1]) === false) {
                 $notFoundHandler = Container::get('notFoundHandler');
                 return $notFoundHandler($req, $res);
+            }
+            else {
+                GithubApi::forkRepo($userGit[1], $vendor_name);
             }
         } elseif (Input::post('delete_plugin')) {
             // TODO: Remove plugin from DB

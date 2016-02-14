@@ -45,12 +45,12 @@ class Plugin
         return $plugins;
     }
 
-    public static function downloadData($plugin_id, $vendor_name)
+    public static function downloadData($plugin_id, $vendor_name, $user = "featherbb")
     {
         // Get main files from Github
-        $composer = Github::getContent($vendor_name, 'composer.json');
-        $featherbb = Github::getContent($vendor_name, 'featherbb.json');
-        $readme = Github::getContent($vendor_name, 'README.md');
+        $composer = Github::getContent($vendor_name, 'composer.json', $user);
+        $featherbb = Github::getContent($vendor_name, 'featherbb.json', $user);
+        $readme = Github::getContent($vendor_name, 'README.md', $user);
 
         if ($composer === false || $featherbb === false || $readme === false) {
             return false;
@@ -125,6 +125,13 @@ class Plugin
         $plugins = ORM::for_table('market_plugins')->raw_query('SELECT * FROM market_plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
 
         return $plugins;
+    }
+
+    public static function getUser($vendor_name)
+    {
+        $user = ORM::for_table('market_plugins')->select('homepage')->where('name', $vendor_name)->find_one();
+
+        return $user['homepage'];
     }
 
 }
