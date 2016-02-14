@@ -8,6 +8,7 @@
     <meta content="noindex, follow" name="robots">
     <title>FeatherBB marketplace</title>
     <link href="/assets/style.css" type="text/css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="http://featherbb.org/favicon.png"/>
     <link href="http://featherbb.org/forums/style/img/favicon.png" type="image/png" rel="shortcut icon">
     <link href="//cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.1.1/gh-fork-ribbon.min.css" rel="stylesheet">
 </head>
