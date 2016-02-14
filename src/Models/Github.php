@@ -52,7 +52,7 @@ class Github
 
     public static function forkRepo($user, $vendor_name)
     {
-        $uri_post = "https://api.github.com/repos/$user/$vendor_name/forks?organization=featherbb&access_token=410aa804a21fd542a8eb7d6e367ca43ec8f93783";
+        $uri_post = "https://api.github.com/repos/$user/$vendor_name/forks?organization=featherbb&access_token=".Config::get('githubtoken');
 
         // Prepare cURL connection
         $ch = curl_init();
