@@ -9,14 +9,18 @@ use App\Models\Github;
 class Plugin
 {
 
-    public static function getLatests()
+    public static function getIndex($offset = 0)
     {
-        $plugins = ORM::for_table('market_plugins')->where('status', 2)->limit(10);
-        Container::get('hooks')->fireDB('model.plugins.getLatest', $plugins);
-        $plugins = $plugins->find_many();
-        foreach ($plugins as $plugin) {
-            $plugin->last_update = (isset($plugin->last_update) && $plugin->last_update > 0) ? date('Y-m-d', $plugin->last_update) : 'Never';
-        }
+        $plugins = ORM::for_table('market_plugins')
+                    ->where('status', 2)
+                    ->limit(20)
+                    ->offset($offset)
+                    ->find_many();
+        // Container::get('hooks')->fireDB('model.plugins.getLatest', $plugins);
+        // $plugins = $plugins->find_many();
+        // foreach ($plugins as $plugin) {
+        //     $plugin->last_update = (isset($plugin->last_update) && $plugin->last_update > 0) ? date('Y-m-d', $plugin->last_update) : 'Never';
+        // }
 
         return $plugins;
     }
@@ -40,7 +44,7 @@ class Plugin
 
     public static function getPending()
     {
-        $plugins = ORM::for_table('market_plugins')->where('status', 0)->find_many();
+        $plugins = ORM::for_table('market_plugins')->order_by_asc('name')->where('status', 0)->find_many();
         foreach ($plugins as $plugin) {
             $vendor_name = str_replace([' ','.'], '-', $plugin->name);
             $plugin->vendor_name = strtolower($vendor_name);
@@ -113,21 +117,60 @@ class Plugin
         return $plugin;
     }
 
-    public static function getTags($tags)
+    public static function countGetTags($tags)
     {
-        $plugins = ORM::for_table('market_plugins')->where_like('keywords', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
+        $nbPlugins = ORM::for_table('market_plugins')
+                    ->where_like('keywords', str_replace('-', ' ', '%'.$tags.'%'))
+                    ->where('status', 2)
+                    ->count();
+        return $nbPlugins;
+    }
+    public static function getTags($tags, $offset = 0)
+    {
+        $plugins = ORM::for_table('market_plugins')
+                    ->where_like('keywords', str_replace('-', ' ', '%'.$tags.'%'))
+                    ->where('status', 2)
+                    ->limit(20)
+                    ->offset($offset)
+                    ->find_many();
         return $plugins;
     }
 
-    public static function getAuthor($tags)
+    public static function countGetAuthor($author)
     {
-        $plugins = ORM::for_table('market_plugins')->where_like('author', str_replace('-', ' ', '%'.$tags.'%'))->find_many();
+        $nbPlugins = ORM::for_table('market_plugins')
+                    ->where_like('author', str_replace('-', ' ', '%'.$author.'%'))
+                    ->where('status', 2)
+                    ->count();
+        return $nbPlugins;
+    }
+    public static function getAuthor($author, $offset = 0)
+    {
+        $plugins = ORM::for_table('market_plugins')
+                    ->where_like('author', str_replace('-', ' ', '%'.$author.'%'))
+                    ->where('status', 2)
+                    ->limit(20)
+                    ->offset($offset)
+                    ->find_many();
         return $plugins;
     }
 
-    public static function getSearch($search)
+    public static function countGetSearch($search)
     {
-        $plugins = ORM::for_table('market_plugins')->raw_query('SELECT * FROM market_plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))->find_many();
+        $nbPlugins = ORM::for_table('market_plugins')
+                    ->raw_query('SELECT * FROM market_plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))
+                    ->where('status', 2)
+                    ->count();
+        return $nbPlugins;
+    }
+    public static function getSearch($search, $offset = 0)
+    {
+        $plugins = ORM::for_table('market_plugins')
+                    ->raw_query('SELECT * FROM market_plugins WHERE description LIKE :descr OR name LIKE :na OR author LIKE :auth', array('descr' => '%'.$search.'%', 'na' => '%'.$search.'%', 'auth' => '%'.$search.'%'))
+                    ->where('status', 2)
+                    ->limit(20)
+                    ->offset($offset)
+                    ->find_many();
         return $plugins;
     }
 

@@ -9,10 +9,20 @@ class PluginsController {
 
     public function index($req, $res, $args)
     {
-        $plugins = PluginModel::getLatests();
+        // Get number of pages
+        $nbPlugins = ORM::for_table('market_plugins')->where('status', 2)->count();
+        $nbPages = ceil(($nbPlugins + 1) / 20);
+        // Determine the offset
+        $p = (!isset($args['page']) || $args['page'] <= 1 || $args['page'] > $nbPages) ? 1 : intval($args['page']);
+        $offset = 20 * ($p - 1);
+        // Generate paging links
+        $pagination = Router::paginate($nbPages, $p, 'plugins/#');
+
+        $plugins = PluginModel::getIndex($offset);
 
         return View::setPageInfo([
                 'plugins' => $plugins,
+                'pagination' => $pagination,
                 'title' => 'Plugins',
                 'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
@@ -51,7 +61,7 @@ class PluginsController {
         // Ensure user is logged
         $user = $req->getAttribute('user');
         if ($user->is_guest) {
-            return Router::redirect(Router::pathFor('login'));
+            return Router::redirect(Router::pathFor('login'), 'You must be logged in to submit a new plugin');
         }
 
         // Prepare base data to send to view
@@ -187,10 +197,20 @@ class PluginsController {
 
     public function tags($req, $res, $args)
     {
-        $plugins = PluginModel::getTags($args['tag']);
+        // Get number of pages
+        $nbPlugins = PluginModel::countGetTags($args['tag']);
+        $nbPages = ceil(($nbPlugins + 1) / 20);
+        // Determine the offset
+        $p = (!isset($args['page']) || $args['page'] <= 1 || $args['page'] > $nbPages) ? 1 : intval($args['page']);
+        $offset = 20 * ($p - 1);
+        // Generate paging links
+        $pagination = Router::paginate($nbPages, $p, 'plugins/tags/'.$args['tag'].'/#');
+
+        $plugins = PluginModel::getTags($args['tag'], $offset);
 
         return View::setPageInfo([
                 'plugins' => $plugins,
+                'pagination' => $pagination,
                 'title' => 'Tags',
                 'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
@@ -205,10 +225,20 @@ class PluginsController {
 
     public function author($req, $res, $args)
     {
+        // Get number of pages
+        $nbPlugins = PluginModel::countGetAuthor($args['author']);
+        $nbPages = ceil(($nbPlugins + 1) / 20);
+        // Determine the offset
+        $p = (!isset($args['page']) || $args['page'] <= 1 || $args['page'] > $nbPages) ? 1 : intval($args['page']);
+        $offset = 20 * ($p - 1);
+        // Generate paging links
+        $pagination = Router::paginate($nbPages, $p, 'plugins/author/'.$args['author'].'/#');
+
         $plugins = PluginModel::getAuthor($args['author']);
 
         return View::setPageInfo([
                 'plugins' => $plugins,
+                'pagination' => $pagination,
                 'title' => 'Author',
                 'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
@@ -226,17 +256,29 @@ class PluginsController {
         if (!Input::query('keywords')) {
             return Router::redirect(Router::pathFor('plugins'));
         }
+
+        // Get number of pages
+        $nbPlugins = PluginModel::countGetSearch(Input::query('keywords'));
+        $nbPages = ceil(($nbPlugins + 1) / 20);
+        // Determine the offset
+        $p = (!isset($args['page']) || $args['page'] <= 1 || $args['page'] > $nbPages) ? 1 : intval($args['page']);
+        $offset = 20 * ($p - 1);
+        // Generate paging links
+        $pagination = Router::paginate($nbPages, $p, 'plugins/search?keywords='.Input::query('keywords').'/#');
+
         $plugins = PluginModel::getSearch(Input::query('keywords'));
 
         return View::setPageInfo([
                 'plugins' => $plugins,
+                'pagination' => $pagination,
                 'title' => 'Search',
                 'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
             ->addBreadcrumb([
                 Router::pathFor('plugins') => 'Plugins',
-                'Search'
+                'Search results',
+                '"'.Input::query('keywords').'"'
             ])
             ->addTemplate('plugins/index.php')
             ->display();

@@ -121,12 +121,12 @@
             <ul class="crumbs">
                 <li><a href="<?= Router::pathFor('home'); ?>">Home</a></li>
 <?php foreach($breadcrumbs as $url => $text): ?>
-                <li><span>»&#160;</span><?= is_string($url) ? '<a href="'.$url.'">' : ''; ?><?php if($text == end($breadcrumbs)): echo '<strong>'.$text.'</strong>'; else: echo $text; endif; ?><?= is_string($url) ? '</a>' : ''; ?></li>
+                <li><span>»&#160;</span><?= is_string($url) ? '<a href="'.$url.'">' : ''; ?><?php if($text == end($breadcrumbs) || !is_string($url)): echo '<strong>'.$text.'</strong>'; else: echo $text; endif; ?><?= is_string($url) ? '</a>' : ''; ?></li>
 <?php endforeach; ?>
             </ul>
 <?php endif; ?>
             <div class="pagepost">
-    			<?php if(isset($pagination)): ?><p class="pagelink conl"><span class="pages-label">Pages: </span><strong class="item1">1</strong> <a href="">2</a> <a href="">3</a> <a href="">4</a> <a rel="next" href="">Next</a></p><?php endif; ?>
+    			<?php if(isset($pagination)): ?><p class="pagelink conl"><?= $pagination; ?></p><?php endif; ?>
                 <?php if(isset($top_right_link)): ?><p class="postlink conr"><a href="<?= $top_right_link['url']; ?>"><?= $top_right_link['text']; ?></a></p><?php endif; ?>
             </div>
             <div class="clearer"></div>

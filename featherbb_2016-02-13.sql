@@ -36,6 +36,7 @@ CREATE TABLE `market_plugins` (
   `keywords` varchar(120) DEFAULT NULL,
   `readme` mediumtext,
   `last_version` varchar(10) DEFAULT NULL,
+  `last_update` int(11) DEFAULT NULL,
   `nb_downloads` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `vendor_name` (`vendor_name`)
@@ -44,9 +45,9 @@ CREATE TABLE `market_plugins` (
 LOCK TABLES `market_plugins` WRITE;
 /*!40000 ALTER TABLE `market_plugins` DISABLE KEYS */;
 
-INSERT INTO `market_plugins` (`id`, `name`, `status`, `homepage`, `vendor_name`, `author`, `description`, `keywords`, `readme`, `last_version`, `nb_downloads`)
+INSERT INTO `market_plugins` (`id`, `name`, `status`, `homepage`, `vendor_name`, `author`, `description`, `keywords`, `readme`, `last_version`, `last_update`, `nb_downloads`)
 VALUES
-	(3,'Private messages',2,'https://github.com/featherbb/private-messages','private-messages','blade','Send private messages to other users of community.','a:3:{i:0;s:9:\"featherbb\";i:1;s:15:\"private message\";i:2;s:9:\"messaging\";}','# FeatherBB Private Messages\nManage your private conversations with other members of the community. \n\n## Description\n\nUse this plugin to send private messages to your friends on FeatherBB forums.\n\n## Features\n\n* Multiple receivers per message.\n* Configurable (groups authorizations, max number of messages...)\n\n## Changelog\n\nNothing mutch to say here, this is a sample README. More to come soon !\n','0.1.0',1);
+	(3,'Private messages',2,'https://github.com/featherbb/private-messages','private-messages','blade','Send private messages to other users of community.','a:3:{i:0;s:9:\"featherbb\";i:1;s:15:\"private message\";i:2;s:9:\"messaging\";}','# FeatherBB Private Messages\nManage your private conversations with other members of the community. \n\n## Description\n\nUse this plugin to send private messages to your friends on FeatherBB forums.\n\n## Features\n\n* Multiple receivers per message.\n* Configurable (groups authorizations, max number of messages...)\n\n## Changelog\n\nNothing mutch to say here, this is a sample README. More to come soon !\n','0.1.0',1455465137,1);
 
 /*!40000 ALTER TABLE `market_plugins` ENABLE KEYS */;
 UNLOCK TABLES;
