@@ -9,11 +9,12 @@ class PluginsController {
 
     public function index($req, $res, $args)
     {
-        $lastPlugins = PluginModel::getLatests();
+        $plugins = PluginModel::getLatests();
 
         return View::setPageInfo([
-                'lastPlugins' => $lastPlugins,
+                'plugins' => $plugins,
                 'title' => 'Plugins',
+                'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
             ->addBreadcrumb(['Plugins'])
@@ -23,10 +24,18 @@ class PluginsController {
 
     public function pending($req, $res, $args)
     {
+        // Ensure user is admmod on forum
+        $user = $req->getAttribute('user');
+        if (!$user->is_admmod) {
+            $notFoundHandler = Container::get('notFoundHandler');
+            return $notFoundHandler($req, $res);
+        }
+
         $pendingPlugins = PluginModel::getPending();
 
         return View::setPageInfo([
                 'plugins' => $pendingPlugins,
+                'active_nav' => 'plugins',
                 'title' => 'Pending plugins'
             ])
             ->addBreadcrumb([
@@ -39,15 +48,26 @@ class PluginsController {
 
     public function create($req, $res, $args)
     {
+        // Ensure user is logged
+        $user = $req->getAttribute('user');
+        if ($user->is_guest) {
+            return Router::redirect(Router::pathFor('login'));
+        }
+
         // Prepare base data to send to view
-        $data = [];
+        $data = ['active_nav' => 'plugins'];
         if (Request::isPost()) {
+            $plugin = [
+                'homepage' => Input::post('homepage'),
+                'name' => Input::post('name'),
+                'author' => $user->username
+            ];
             // Check if plugin is valid
-            $validate = PluginModel::validate(Request::getParsedBody());
+            $validate = PluginModel::validate($plugin);
             if ($validate !== true) {
                 $data['errors'] = $validate;
             } else {
-                PluginModel::create(Request::getParsedBody());
+                PluginModel::create($plugin);
                 return Router::redirect(Router::pathFor('plugins.create'));
             }
         }
@@ -63,28 +83,35 @@ class PluginsController {
 
     public function accept($req, $res, $args)
     {
+        // Ensure user is admmod on forum
+        $user = $req->getAttribute('user');
+        if (!$user->is_admmod) {
+            $notFoundHandler = Container::get('notFoundHandler');
+            return $notFoundHandler($req, $res);
+        }
+
         // Download archive and store info files to disk
-        $vendor_name = Request::getParsedBody()['vendor_name'];
-        $plugin_id = Request::getParsedBody()['plugin_id'];
+        $vendor_name = Input::post('vendor_name');
+        $plugin_id = Input::post('plugin_id');
 
         // Check required fields are sent from form
-        if (!isset($vendor_name) || !isset($plugin_id)) {
+        if (!$vendor_name || !$plugin_id) {
             $notFoundHandler = Container::get('notFoundHandler');
             return $notFoundHandler($req, $res);
         }
 
         // Check vendor name is unique
-        if (ORM::for_table('plugins')->where('vendor_name', $vendor_name)->count() > 0) {
+        if (ORM::for_table('market_plugins')->where('vendor_name', $vendor_name)->count() > 0) {
             return 'Vendor name already exists!';
         }
 
-        if (isset(Request::getParsedBody()['accept_plugin'])) {
+        if (Input::post('accept_plugin')) {
             // If no errors while getting data from Github, store generic infos to DB, else throw 404
             if (PluginModel::downloadData($plugin_id, $vendor_name) === false) {
                 $notFoundHandler = Container::get('notFoundHandler');
                 return $notFoundHandler($req, $res);
             }
-        } elseif (isset(Request::getParsedBody()['delete_plugin'])) {
+        } elseif (Input::post('delete_plugin')) {
             // TODO: Remove plugin from DB
         }
 
@@ -112,15 +139,18 @@ class PluginsController {
             $content = Markdown::defaultTransform($plugin->menu_content[$action]);
         }
 
-        return View::setPageInfo(['plugin' => $plugin, 'content' => $content, 'active_menu' => $action])
-            ->addBreadcrumb(['plugins'])
+        return View::setPageInfo(['plugin' => $plugin, 'content' => $content, 'active_menu' => $action, 'active_nav' => 'plugins'])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                htmlspecialchars($plugin->name)
+            ])
             ->addTemplate('plugins/view.php')
             ->display();
     }
 
     public function download($req, $res, $args)
     {
-        $plugin = ORM::for_table('plugins')->where('vendor_name', $args['name'])->find_one();
+        $plugin = ORM::for_table('market_plugins')->where('vendor_name', $args['name'])->find_one();
 
         if (!$plugin) {
             $notFoundHandler = Container::get('notFoundHandler');
@@ -138,11 +168,15 @@ class PluginsController {
         $plugins = PluginModel::getTags($args['tag']);
 
         return View::setPageInfo([
-            'lastPlugins' => $plugins,
-            'title' => 'Tags',
-            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
-        ])
-            ->addBreadcrumb(['Plugins'])
+                'plugins' => $plugins,
+                'title' => 'Tags',
+                'active_nav' => 'plugins',
+                'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+            ])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                'Search by tags'
+            ])
             ->addTemplate('plugins/index.php')
             ->display();
     }
@@ -152,31 +186,36 @@ class PluginsController {
         $plugins = PluginModel::getAuthor($args['author']);
 
         return View::setPageInfo([
-            'lastPlugins' => $plugins,
-            'title' => 'Author',
-            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
-        ])
-            ->addBreadcrumb(['Plugins'])
+                'plugins' => $plugins,
+                'title' => 'Author',
+                'active_nav' => 'plugins',
+                'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+            ])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                'Authored by '.htmlspecialchars($args['author'])
+            ])
             ->addTemplate('plugins/index.php')
             ->display();
     }
 
     public function search($req, $res, $args)
     {
-        if (isset(Request::getQueryParams()['keywords'])) {
-            $plugins = PluginModel::getSearch(Request::getQueryParams()['keywords']);
+        if (!Input::query('keywords')) {
+            return Router::redirect(Router::pathFor('plugins'));
         }
-        else {
-            $notFoundHandler = Container::get('notFoundHandler');
-            return $notFoundHandler($req, $res);
-        }
+        $plugins = PluginModel::getSearch(Input::query('keywords'));
 
         return View::setPageInfo([
-            'lastPlugins' => $plugins,
-            'title' => 'Search',
-            'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
-        ])
-            ->addBreadcrumb(['Plugins'])
+                'plugins' => $plugins,
+                'title' => 'Search',
+                'active_nav' => 'plugins',
+                'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
+            ])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                'Search'
+            ])
             ->addTemplate('plugins/index.php')
             ->display();
     }

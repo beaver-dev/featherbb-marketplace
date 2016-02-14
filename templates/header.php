@@ -15,7 +15,7 @@
 <body id="punindex">
 <div class="github-fork-ribbon-wrapper left">
     <div class="github-fork-ribbon">
-        <a href="https://github.com/featherbb/featherbb">Fork me on GitHub</a>
+        <a href="https://github.com/beaver-dev/featherbb-marketplace" target="_blank">Fork me on GitHub</a>
     </div>
 </div>
 <header>
@@ -27,23 +27,32 @@
             <div id="phone">
                 <div id="brdmenu" class="inbox">
                     <ul>
-                        <li id="navindex" class="isactive">
+                        <li id="navindex"<?php if(isset($active_nav) && $active_nav == 'index') echo ' class="isactive"'; ?>>
                             <a href="<?= Router::pathFor('home') ?>">Home</a>
                         </li>
-                        <li id="navuserlist">
+                        <li id="navplugins"<?php if(isset($active_nav) && $active_nav == 'plugins') echo ' class="isactive"'; ?>>
                             <a href="<?= Router::pathFor('plugins') ?>">Plugins</a>
                         </li>
-                        <li id="navsearch">
+                        <li id="navthemes"<?php if(isset($active_nav) && $active_nav == 'themes') echo ' class="isactive"'; ?>>
                             <a href="<?= Router::pathFor('home') ?>">Themes</a>
                         </li>
-                        <li id="navprofile">
-                            <a href="<?= Router::pathFor('home') ?>">Languages</a>
+                        <li id="navforum">
+                            <a href="http://forums.featherbb.org" target="_blank">Forum</a>
                         </li>
+<?php if($user->is_guest): ?>
+                        <li id="navlogin"<?php if(isset($active_nav) && $active_nav == 'login') echo ' class="isactive"'; ?>>
+                            <a href="<?= Router::pathFor('login') ?>">Login</a>
+                        </li>
+<?php else: ?>
+                        <li id="navlogout">
+                            <a href="<?= Router::pathFor('logout') ?>">Logout</a>
+                        </li>
+<?php endif; ?>
                     </ul>
                 </div>
                 <div class="navbar-right">
                     <form class="nav-search" action="/plugins/search" method="get">
-                        <input type="text" placeholder="Search" maxlength="100" size="20" name="keywords" value="<?php if (isset(Request::getQueryParams()['keywords'])) echo htmlspecialchars(Request::getQueryParams()['keywords']); ?>">
+                        <input type="text" placeholder="Search" maxlength="100" size="20" name="keywords" value="<?= Input::query('keywords'); ?>">
                     </form>
                 </div>
             </div>
@@ -64,15 +73,20 @@
             <div class="status-avatar">
                 <div id="brdwelcome" class="inbox">
                     <ul class="conl">
+<?php if(!$user->is_guest): ?>
                         <li>
-                            <span>Logged in as <strong>adaur</strong></span>
+                            <span>Logged in as <strong><?= $user->username; ?></strong></span>
                         </li>
-                        <li>
-                            <span>Last visit: Yesterday 20:32:26</span>
-                        </li>
-                        <li class="reportlink">
+<?php if($user->is_admmod): ?>
+                        <li class="pendinglink">
                             <span><strong><a href="<?= Router::pathFor('plugins.pending'); ?>">View pending plugins</a></strong></span>
                         </li>
+<?php endif; ?>
+<?php else: ?>
+                        <li>
+                            <span>You are not logged in.</span>
+                        </li>
+<?php endif; ?>
                     </ul>
                     <div class="clearer"></div>
                 </div>
@@ -80,6 +94,24 @@
             <div class="clear"></div>
         </div>
     </div>
+<?php if (!empty(Container::get('flash')->getMessages())): ?>
+    <script type="text/javascript">
+        window.onload = function() {
+            var flashMessage = document.getElementById('flashmsg');
+            flashMessage.className = 'flashmsg '+flashMessage.getAttribute('data-type')+' show';
+            setTimeout(function () {
+                flashMessage.className = 'flashmsg '+flashMessage.getAttribute('data-type');
+            }, 10000);
+            return false;
+        }
+    </script>
+<?php foreach (Container::get('flash')->getMessages() as $type => $message): ?>
+    <div class="flashmsg info" data-type="<?= $type; ?>" id="flashmsg">
+        <h2>Info <span style="float:right;cursor:pointer" onclick="document.getElementById('flashmsg').className = 'flashmsg';">&times;</span></h2>
+        <p><?= htmlspecialchars($message[0]) ?></p>
+    </div>
+<?php endforeach; ?>
+<?php endif; ?>
 </header>
 <section class="container">
 

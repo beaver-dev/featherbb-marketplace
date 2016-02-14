@@ -1,0 +1,28 @@
+<?php
+return [
+    'settings' => [
+        'displayErrorDetails' => true,
+
+        // Renderer settings
+        'renderer' => [
+            'template_path' => __DIR__ . '/../templates'
+        ],
+
+        // Database settings
+        'database' => [
+            'host' => 'localhost',
+            'dbname' => 'featherbb',
+            'username' => 'root',
+            'password' => 'root',
+        ],
+
+        // JSON Web Token data
+        'jwt' => [
+            'key'       => '',     // Generated with base64_encode(openssl_random_pseudo_bytes(64))
+            'algorithm' => 'HS512' // Algorithm used to sign the token, see https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#section-3
+        ],
+
+        // Server name
+        'serverName' => 'marketplace.featherbb.org'
+    ]
+];
