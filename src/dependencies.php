@@ -12,6 +12,11 @@ Container::set('hooks', function($c) {
     return new \App\Core\Hooks;
 });
 
+// flash messages
+Container::set('flash', function($c) {
+    return new \Slim\Flash\Messages;
+});
+
 // cookies
 Container::set('cookie', function($c){
     $request = $c->get('request');

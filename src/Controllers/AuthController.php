@@ -13,9 +13,9 @@ class AuthController
     function login($req, $res, $args)
     {
         if ($req->isPost()) {
-            $form_username = Request::getParsedBody()['req_username'];
-            $form_password = Request::getParsedBody()['req_password'];
-            $save_pass = (bool) isset(Request::getParsedBody()['save_pass']);
+            $form_username = Input::post('req_username');
+            $form_password = Input::post('req_password');
+            $save_pass = (bool) Input::post('save_pass');
 
             // If form was correctly filled
             if ($form_username && $form_password) {
@@ -25,12 +25,11 @@ class AuthController
                 $form_password_hash = Random::hash($form_password); // Will result in a SHA-1 hash
 
                 if ($user->password == $form_password_hash) {
-                    $expire = ($save_pass) ? time() + 1209600 : 0;
+                    $expire = ($save_pass) ? time() + 1209600 : time() + 1800;
                     $jwt = AuthModel::generate_jwt($user);
 
                     AuthModel::feather_setcookie('Bearer '.$jwt, $expire);
-
-                    return Router::redirect(Router::pathFor('home'));
+                    return Router::redirect(Router::pathFor('home'), 'Welcome '.$user->username.'!');
                 } else {
                     throw new \Exception('Wrong user/pass', 403);
                 }
@@ -39,7 +38,7 @@ class AuthController
                 throw new \Exception("Username and password are required fields.", 1);
             }
         } elseif ($req->isGet()) {
-            return View::setPageInfo(['title' => 'Login'])
+            return View::setPageInfo(['title' => 'Login', 'active_nav' => 'login'])
                 ->addTemplate('login.php')
                 ->display();
         }

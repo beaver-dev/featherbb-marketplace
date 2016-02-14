@@ -14,6 +14,7 @@ class PluginsController {
         return View::setPageInfo([
                 'plugins' => $plugins,
                 'title' => 'Plugins',
+                'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
             ->addBreadcrumb(['Plugins'])
@@ -34,6 +35,7 @@ class PluginsController {
 
         return View::setPageInfo([
                 'plugins' => $pendingPlugins,
+                'active_nav' => 'plugins',
                 'title' => 'Pending plugins'
             ])
             ->addBreadcrumb([
@@ -53,11 +55,11 @@ class PluginsController {
         }
 
         // Prepare base data to send to view
-        $data = [];
+        $data = ['active_nav' => 'plugins'];
         if (Request::isPost()) {
             $plugin = [
-                'homepage' => Request::getParsedBody()['homepage'],
-                'name' => Request::getParsedBody()['name'],
+                'homepage' => Input::post('homepage'),
+                'name' => Input::post('name'),
                 'author' => $user->username
             ];
             // Check if plugin is valid
@@ -89,11 +91,11 @@ class PluginsController {
         }
 
         // Download archive and store info files to disk
-        $vendor_name = Request::getParsedBody()['vendor_name'];
-        $plugin_id = Request::getParsedBody()['plugin_id'];
+        $vendor_name = Input::post('vendor_name');
+        $plugin_id = Input::post('plugin_id');
 
         // Check required fields are sent from form
-        if (!isset($vendor_name) || !isset($plugin_id)) {
+        if (!$vendor_name || !$plugin_id) {
             $notFoundHandler = Container::get('notFoundHandler');
             return $notFoundHandler($req, $res);
         }
@@ -103,13 +105,13 @@ class PluginsController {
             return 'Vendor name already exists!';
         }
 
-        if (isset(Request::getParsedBody()['accept_plugin'])) {
+        if (Input::post('accept_plugin')) {
             // If no errors while getting data from Github, store generic infos to DB, else throw 404
             if (PluginModel::downloadData($plugin_id, $vendor_name) === false) {
                 $notFoundHandler = Container::get('notFoundHandler');
                 return $notFoundHandler($req, $res);
             }
-        } elseif (isset(Request::getParsedBody()['delete_plugin'])) {
+        } elseif (Input::post('delete_plugin')) {
             // TODO: Remove plugin from DB
         }
 
@@ -137,8 +139,11 @@ class PluginsController {
             $content = Markdown::defaultTransform($plugin->menu_content[$action]);
         }
 
-        return View::setPageInfo(['plugin' => $plugin, 'content' => $content, 'active_menu' => $action])
-            ->addBreadcrumb(['plugins'])
+        return View::setPageInfo(['plugin' => $plugin, 'content' => $content, 'active_menu' => $action, 'active_nav' => 'plugins'])
+            ->addBreadcrumb([
+                Router::pathFor('plugins') => 'Plugins',
+                htmlspecialchars($plugin->name)
+            ])
             ->addTemplate('plugins/view.php')
             ->display();
     }
@@ -165,6 +170,7 @@ class PluginsController {
         return View::setPageInfo([
                 'plugins' => $plugins,
                 'title' => 'Tags',
+                'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
             ->addBreadcrumb([
@@ -182,6 +188,7 @@ class PluginsController {
         return View::setPageInfo([
                 'plugins' => $plugins,
                 'title' => 'Author',
+                'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
             ->addBreadcrumb([
@@ -194,17 +201,15 @@ class PluginsController {
 
     public function search($req, $res, $args)
     {
-        if (isset(Request::getQueryParams()['keywords'])) {
-            $plugins = PluginModel::getSearch(Request::getQueryParams()['keywords']);
+        if (!Input::query('keywords')) {
+            return Router::redirect(Router::pathFor('plugins'));
         }
-        else {
-            $notFoundHandler = Container::get('notFoundHandler');
-            return $notFoundHandler($req, $res);
-        }
+        $plugins = PluginModel::getSearch(Input::query('keywords'));
 
         return View::setPageInfo([
                 'plugins' => $plugins,
                 'title' => 'Search',
+                'active_nav' => 'plugins',
                 'top_right_link' => ['url' => Router::pathFor('plugins.create'), 'text' => 'Add plugin']
             ])
             ->addBreadcrumb([

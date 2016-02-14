@@ -8,9 +8,15 @@ class Router extends SlimSugar
         return Container::get('router')->pathFor($name, $data, $queryParams);
     }
 
-    public static function redirect($uri)
+    public static function redirect($uri, $message = null, $status = 301)
     {
-        return Response::withStatus(301)->withHeader('Location', $uri);
+        if (is_string($message))
+            $message = array('info', $message);
+        // Add a flash message if needed
+        if (is_array($message))
+            Container::get('flash')->addMessage($message[0], $message[1]);
+
+        return Response::withStatus($status)->withHeader('Location', $uri);
     }
 
 }
