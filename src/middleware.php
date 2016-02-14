@@ -18,7 +18,19 @@ App::add(function($req, $res, $next) {
     ORM::configure('username', $settings['username']);
     ORM::configure('password', $settings['password']);
     ORM::configure('logging', true);
-    // Model::$auto_prefix_models = '\\'.$settings['prefix'].'\\';
+    return $next($req, $res);
+});
+
+// Permanently redirect paths with a trailing slash
+// to their non-trailing counterpart
+App::add(function ($req, $res, $next) {
+    $uri = $req->getUri();
+    $path = $uri->getPath();
+    if ($path != '/' && substr($path, -1) == '/') {
+        $uri = $uri->withPath(substr($path, 0, -1));
+        return $res->withRedirect((string)$uri, 301);
+    }
+
     return $next($req, $res);
 });
 
