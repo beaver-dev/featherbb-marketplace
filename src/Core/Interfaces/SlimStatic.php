@@ -60,7 +60,7 @@ class SlimStatic
             'View'     => 'view',
         );
 
-        $container = array($slim, '__get');
+        $container = $slim->getContainer();
 
         foreach ($services as $alias => $id) {
             $proxy = __NAMESPACE__.'\\'.$alias;

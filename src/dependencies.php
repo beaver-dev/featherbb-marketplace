@@ -3,7 +3,7 @@
 // DIC configuration
 
 // view renderer
-Container::set('renderer', function ($c) {
+Container::set('view', function ($c) {
     return new \App\Core\View;
 });
 

@@ -1,9 +1,5 @@
 <?php namespace App\Core\Interfaces;
 
-class Response extends SlimSugar
+class Response extends \Statical\BaseProxy
 {
-    public static function __callStatic($name, $args)
-    {
-    	return call_user_func_array(array(static::$slim->getContainer()['response'], $name), $args);
-    }
 }

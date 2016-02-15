@@ -27,6 +27,9 @@ class Auth
                 } catch (\Firebase\JWT\ExpiredException $e) {
                     // TODO: (Optionnal) add flash message to say token has expired
                     return false;
+                } catch (\Firebase\JWT\SignatureInvalidException $e) {
+                    // If token secret has changed (config.php file removed then regenerated)
+                    return false;
                 }
             } else {
                 // Token is not present (or invalid) in cookie
