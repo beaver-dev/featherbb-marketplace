@@ -1932,3 +1932,6 @@ th {
   color: #FFF;
   background-color: #1EAEDB;
   border-color: #1EAEDB; }
+#pl tbody tr td:last-child {
+    text-align: center;
+}

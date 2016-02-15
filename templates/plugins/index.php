@@ -1,3 +1,4 @@
+<?php use \App\Core\Utils; ?>
 <?php if (count($plugins) == 0): ?>
         <div id="posterror" class="block">
             <h2><span>Oh noze !</span></h2>
@@ -8,7 +9,7 @@
             </div>
         </div>
 <?php else: ?>
-        <div id="vf" class="blocktable">
+        <div id="pl" class="blocktable">
             <h2><span><?= $title ?></span></h2>
             <div class="box">
                 <div class="inbox">
@@ -35,7 +36,7 @@
                                 <td class="tc2"><?= htmlspecialchars($plugin->nb_downloads); ?></td>
                                 <td class="tcr">
                                     <a href="<?= Router::pathFor('plugins.download', ['name'=>$plugin->vendor_name,'version'=>$plugin->last_version]); ?>" title="Download last version"><?= isset($plugin->last_version) ? htmlspecialchars($plugin->last_version) : ''; ?></a><br>
-                                    <span><?= htmlspecialchars($plugin->last_update); ?></span>
+                                    <span><?= htmlspecialchars(Utils::format_time($plugin->last_update, true)); ?></span>
                                 </td>
                             </tr>
 <?php endforeach; ?>

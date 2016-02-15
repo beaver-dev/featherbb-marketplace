@@ -16,11 +16,6 @@ class Plugin
                     ->limit(20)
                     ->offset($offset)
                     ->find_many();
-        // Container::get('hooks')->fireDB('model.plugins.getLatest', $plugins);
-        // $plugins = $plugins->find_many();
-        // foreach ($plugins as $plugin) {
-        //     $plugin->last_update = (isset($plugin->last_update) && $plugin->last_update > 0) ? date('Y-m-d', $plugin->last_update) : 'Never';
-        // }
 
         return $plugins;
     }
@@ -108,8 +103,6 @@ class Plugin
                 $menu_content[$menu_key] = $result;
             }
             $plugin->menu_content = $menu_content;
-
-            $plugin->last_update = (isset($plugin->last_update) && $plugin->last_update > 0) ? date('Y-m-d', $plugin->last_update) : 'Never';
 
             $plugin->keywords = unserialize($plugin->keywords);
         }

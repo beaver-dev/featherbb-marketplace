@@ -1,4 +1,5 @@
 <?php
+use \App\Core\Utils;
 $tag_links = [];
 foreach ($plugin->keywords as $tag) {
     $tag_links[] = '<a href="'.Router::pathFor('plugins.tags', ['tag' => str_replace([' ', '.'], '-', $tag)]).'">#'.htmlspecialchars($tag).'</a>';
@@ -21,9 +22,10 @@ foreach ($plugin->keywords as $tag) {
         <h2>
             <a href="<?= Router::pathFor('plugins.view', ['name'=>$plugin->vendor_name]); ?>"><?= $plugin->name; ?></a>
             <small><?= isset($plugin->last_version) ? htmlspecialchars($plugin->last_version) : '0.1.0'; ?></small>
-            <span class="plugin-last-update">Last updated: <?= $plugin->last_update; ?></span>
+            <span class="plugin-last-update">Last updated: <?= htmlspecialchars(Utils::format_time($plugin->last_update)); ?></span>
         </h2>
 
+        <p>By <?= htmlspecialchars($plugin->author); ?></p>
         <em><?= isset($plugin->description) ? htmlspecialchars($plugin->description) : 'No description available'; ?></em>
         <p><?= htmlspecialchars($plugin->nb_downloads); ?> downloads</p>
         <p><?= implode(', ', $tag_links); ?></p>
@@ -37,7 +39,6 @@ foreach ($plugin->keywords as $tag) {
 
     <div class="plugin-body">
         <?= $content; ?>
-        <p class="postedit"><em>Last edited by blade (Today 15:28:47)</em></p>
     </div>
 </div>
 
