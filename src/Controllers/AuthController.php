@@ -26,7 +26,7 @@ class AuthController
 
                 if ($user->password == $form_password_hash) {
                     $expire = ($save_pass) ? time() + 1209600 : time() + 1800;
-                    $jwt = AuthModel::generate_jwt($user);
+                    $jwt = AuthModel::generate_jwt($user, $expire);
 
                     AuthModel::feather_setcookie('Bearer '.$jwt, $expire);
                     return Router::redirect(Router::pathFor('home'), 'Welcome '.$user->username.'!');

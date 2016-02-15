@@ -1,6 +1,6 @@
 <?php namespace App\Controllers;
 
-class HomeController {
+class HomeController extends BaseController {
 
     public function index ($request, $response, $args) {
         // Render index view

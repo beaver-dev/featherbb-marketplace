@@ -30,7 +30,7 @@ class Auth
         return ORM::for_table('users')->where('username', $username)->find_one();
     }
 
-    public static function generate_jwt($user)
+    public static function generate_jwt($user, $expire)
     {
         $issuedAt   = time();
         $tokenId    = base64_encode(Random::key(32));
@@ -43,7 +43,7 @@ class Auth
             'iat'  => $issuedAt,         // Issued at: time when the token was generated
             'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
             'iss'  => $serverName,       // Issuer
-            'exp'  => $issuedAt + 1800,  // Expire after 30 minutes of idle
+            'exp'  => $expire,           // Expire after 30 minutes of idle or 14 days if "remember me"
             'data' => [                  // Data related to the signer user
                 'userId'   => $user->id, // userid from the users table
                 'userName' => $user->username, // User name

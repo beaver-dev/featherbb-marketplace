@@ -22,7 +22,7 @@
                         <input type="hidden" name="csrf_value" value="<?= $csrf_value; ?>">
 <?php include '_form.php'; ?>
                     </form>
-                    <strong>89</strong> plugins are currently in the review queue.<br>
+                    <strong><?= $pendingPlugins; ?></strong> plugins are currently in the review queue.<br>
                     Make sure your plugin has all the requirements to be valid. More informations available <a href="#" target="_blank">here</a>.
                 </div>
             </div>

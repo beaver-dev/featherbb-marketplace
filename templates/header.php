@@ -6,7 +6,7 @@
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, user-scalable=no, initial-scale=1" name="viewport">
     <meta content="noindex, follow" name="robots">
-    <title>FeatherBB marketplace</title>
+    <title>FeatherBB Marketplace</title>
     <link href="/assets/style.css" type="text/css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="http://featherbb.org/favicon.png"/>
     <link href="http://featherbb.org/forums/style/img/favicon.png" type="image/png" rel="shortcut icon">
@@ -77,9 +77,9 @@
                         <li>
                             <span>Logged in as <strong><?= $user->username; ?></strong></span>
                         </li>
-<?php if($user->is_admmod): ?>
+<?php if($user->is_admmod && $pendingPlugins > 0): ?>
                         <li class="pendinglink">
-                            <span><strong><a href="<?= Router::pathFor('plugins.pending'); ?>">View pending plugins</a></strong></span>
+                            <span><strong><a href="<?= Router::pathFor('plugins.pending'); ?>"><?= $pendingPlugins ?> pending plugins</a></strong></span>
                         </li>
 <?php endif; ?>
 <?php else: ?>

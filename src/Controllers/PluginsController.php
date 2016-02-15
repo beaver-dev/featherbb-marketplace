@@ -5,7 +5,11 @@ use Michelf\Markdown;
 use App\Models\Plugin as PluginModel;
 use App\Models\Github as GithubApi;
 
-class PluginsController {
+class PluginsController extends BaseController {
+
+    // public function __construct($container) {
+    //     parent::__construct($container);
+    // }
 
     public function index($req, $res, $args)
     {

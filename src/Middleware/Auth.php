@@ -49,9 +49,9 @@ class Auth
             $user->is_admmod = $user->g_id == '1' || $user->g_moderator == '1';
 
             // Refresh cookie to avoid re-logging between idle
-            $expires = ($jwt->exp > time() + 1800) ? time() + 1209600 : time() + 1800;
-            $jwt = AuthModel::generate_jwt($user);
-            AuthModel::feather_setcookie('Bearer '.$jwt, $expires);
+            $expire = ($jwt->exp > time() + 1800) ? time() + 1209600 : time() + 1800;
+            $jwt = AuthModel::generate_jwt($user, $expire);
+            AuthModel::feather_setcookie('Bearer '.$jwt, $expire);
         } else {
             $user = AuthModel::load_user(1);
             $user->is_guest = true;
