@@ -1,4 +1,4 @@
-<?php
+<?php namespace App;
 
 use App\Core\Interfaces\SlimStatic;
 use App\Core\Random;
@@ -29,10 +29,10 @@ if (!is_file($settings)) {
     file_put_contents($settings, '<?php'."\n".'return '.var_export($defaults, true).';');
 }
 
-$app = new Slim\App(require $settings);
+$app = new \Slim\App(require $settings);
 SlimStatic::boot($app);
 // Allow static proxies to be called from anywhere in App
-Statical::addNamespace('*', 'App\\*', 'App\\Controllers\\*', 'App\\Models\\*', 'App\\Middleware\\*', 'App\\Plugins\\*');
+Statical::addNamespace('*', __NAMESPACE__.'\\*');
 
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';

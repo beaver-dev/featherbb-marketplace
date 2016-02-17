@@ -82,7 +82,7 @@ class PluginsController extends BaseController {
                 $data['errors'] = $validate;
             } else {
                 PluginModel::create($plugin);
-                return Router::redirect(Router::pathFor('plugins.create'));
+                return Router::redirect(Router::pathFor('plugins.create'), 'Plugin submitted');
             }
         }
         // Display view
@@ -115,7 +115,7 @@ class PluginsController extends BaseController {
         }
 
         // Check vendor name is unique
-        if (ORM::for_table('market_plugins')->where('vendor_name', $vendor_name)->count() > 0) {
+        if (ORM::for_table('market_plugins')->where('vendor_name', $vendor_name)->where('status', 2)->count() > 0) {
             return 'Vendor name already exists!';
         }
 
@@ -150,13 +150,12 @@ class PluginsController extends BaseController {
         $action = isset($args['action']) ? $args['action'] : 'description';
 
         $content = '';
-        if ($action === 'history') {
-            // $content = json_decode(GithubApi::getTags($args['name']));
-            $content = GithubApi::getTags($args['name']);
-        } elseif (!isset($plugin->menu_content[$action]) && isset($plugin->menu_content['description'])) {
+        if (!isset($plugin->menu_content[$action]) && isset($plugin->menu_content['description'])) {
             $content = Markdown::defaultTransform($plugin->menu_content['description']);
         } elseif (isset($plugin->menu_content[$action])) {
             $content = Markdown::defaultTransform($plugin->menu_content[$action]);
+        } else {
+            $content = 'No content found for this tab.';
         }
 
         return View::setPageInfo(['plugin' => $plugin, 'content' => $content, 'active_menu' => $action, 'active_nav' => 'plugins'])

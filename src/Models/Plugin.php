@@ -30,9 +30,12 @@ class Plugin
     {
         $plugin = ORM::for_table('market_plugins')->create();
 
+        $parts = explode('/', str_ireplace(array('http://', 'https://'), '', $data['homepage']));
+
         $plugin->homepage = $data['homepage'];
         $plugin->name = $data['name'];
         $plugin->author = $data['author'];
+        $plugin->vendor_name = $parts[2];
 
         $plugin->save();
     }
@@ -40,10 +43,10 @@ class Plugin
     public static function getPending()
     {
         $plugins = ORM::for_table('market_plugins')->order_by_asc('name')->where('status', 0)->find_many();
-        foreach ($plugins as $plugin) {
-            $vendor_name = str_replace([' ','.'], '-', $plugin->name);
-            $plugin->vendor_name = strtolower($vendor_name);
-        }
+        // foreach ($plugins as $plugin) {
+        //     $vendor_name = str_replace([' ','.'], '-', $plugin->name);
+        //     $plugin->vendor_name = strtolower($vendor_name);
+        // }
         return $plugins;
     }
 
@@ -100,7 +103,7 @@ class Plugin
             $menu_content = [];
             foreach ($results as $key => $result) {
                 $menu_key = strtolower($plugin->menus[$key]);
-                $menu_content[$menu_key] = $result;
+                $menu_content[$menu_key] = htmlspecialchars($result);
             }
             $plugin->menu_content = $menu_content;
 
@@ -169,7 +172,7 @@ class Plugin
 
     public static function getUser($vendor_name)
     {
-        $user = ORM::for_table('market_plugins')->select('homepage')->where('name', $vendor_name)->find_one();
+        $user = ORM::for_table('market_plugins')->select('homepage')->where('vendor_name', $vendor_name)->find_one();
 
         return $user['homepage'];
     }

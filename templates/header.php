@@ -34,7 +34,7 @@
                             <a href="<?= Router::pathFor('plugins') ?>">Plugins</a>
                         </li>
                         <li id="navthemes"<?php if(isset($active_nav) && $active_nav == 'themes') echo ' class="isactive"'; ?>>
-                            <a href="<?= Router::pathFor('home') ?>">Themes</a>
+                            <a href="<?= Router::pathFor('themes') ?>">Themes</a>
                         </li>
                         <li id="navforum">
                             <a href="http://forums.featherbb.org" target="_blank">Forum</a>
@@ -77,9 +77,12 @@
                         <li>
                             <span>Logged in as <strong><?= $user->username; ?></strong></span>
                         </li>
-<?php if($user->is_admmod && $pendingPlugins > 0): ?>
+<?php if($user->is_admmod && $pendingPlugins > 0 || $pendingThemes > 0): ?>
                         <li class="pendinglink">
-                            <span><strong><a href="<?= Router::pathFor('plugins.pending'); ?>"><?= $pendingPlugins ?> pending plugins</a></strong></span>
+                            <span>
+                                <strong><a href="<?= Router::pathFor('plugins.pending'); ?>"><?= $pendingPlugins ?></strong> pending plugins</a> -
+                                <strong><a href="<?= Router::pathFor('themes.pending'); ?>"><?= $pendingThemes ?></strong> pending themes</a>
+                            </span>
                         </li>
 <?php endif; ?>
 <?php else: ?>
